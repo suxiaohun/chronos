@@ -1,6 +1,3 @@
 - build private registry
-  - use `registry:2.8.2` 
-  - config local path: `/sususu/registry:/var/lib/registry`
-  - add auth
 - add local volume provisioner chart
 - add mysql chart
