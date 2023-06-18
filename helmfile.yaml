@@ -1,5 +1,5 @@
 
 releases:
-  - name: mysql
-    namespace: component
-    chart: ./charts/mysql
+  - name: local-volume-provisioner
+    namespace: kube-system
+    chart: ./charts/local-volume-provisioner
