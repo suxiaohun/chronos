@@ -13,7 +13,7 @@ common:
     # rbac.create: `true` if rbac resources should be created
     create: true
     # rbac.pspEnabled: `true` if PodSecurityPolicy resources should be created
-    pspEnabled: true
+    pspEnabled: false
   #
   # Defines whether to generate a serviceAccount
   #
