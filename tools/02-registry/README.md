@@ -11,9 +11,33 @@
 - add config: `{ "insecure-registries" : ["myregistrydomain.com:5000"]}`
 - restart docker: `sudo systemctl restart docker.service`
 
+> But since v1.20, k8s use containerd as the default cr, so you must config containerd can pull/push images from insecure registry
 
+- `containerd config default > config.toml`
+- change these lines below:
+```toml
+  [plugins."io.containerd.grpc.v1.cri".registry.configs]
+    [plugins."io.containerd.grpc.v1.cri".registry.configs."10.4.243.51:5000"]
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."10.4.243.51:5000".tls]
+          ca_file = ""
+          cert_file = ""
+          insecure_skip_verify = true
+          key_file = ""
+
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."10.4.243.51:5000"]
+      endpoint = ["http://10.4.243.51:5000"]
+```
+- restart containerd: `sudo systemctl restart containerd`
 
 Above all, you can pull and push images by the private registry
+
+---
+
+
+
+
+
 
 ---
 -----not used now-----
