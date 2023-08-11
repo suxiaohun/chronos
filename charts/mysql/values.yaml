@@ -21,7 +21,7 @@ testFramework:
 ## Specify password for root user
 ##
 ## Default: random 10 character string
-# mysqlRootPassword: testing
+mysqlRootPassword: "123456"
 
 ## Create a database user
 ##
@@ -187,9 +187,10 @@ service:
   annotations: {}
   ## Specify a service type
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types
-  type: ClusterIP
+#  type: ClusterIP
+  type: NodePort
   port: 3306
-  # nodePort: 32000
+  nodePort: 30306
   # loadBalancerIP:
 
 ## Pods Service Account
