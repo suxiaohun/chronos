@@ -1,3 +1,6 @@
+- install os
+- mount disks
+- install k8s
 - build private registry
 - add local volume provisioner chart
 - add mysql chart

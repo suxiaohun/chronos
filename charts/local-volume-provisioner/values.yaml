@@ -2,9 +2,7 @@ global:
   hostArch: "amd64"
   dockerRegistry: "10.4.243.51:5000"
 
-#
-# Common options.
-#
+
 common:
   #
   # Defines whether to generate rbac roles
@@ -63,7 +61,6 @@ common:
 classes:
 - name: local-mysql
   hostDir: "/sususu/locals/mysql"
-  mountDir: "/local-mysql-disks"
   storageClass: true
 
 
