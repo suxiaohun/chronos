@@ -3,7 +3,7 @@
 ##
 global:
   hostArch: "amd64"
-  dockerRegistry: "10.4.243.51:5000"
+  imageRegistry: "10.4.243.51:5000"
 
 image: "mysql"
 imageTag: "5.7.43"

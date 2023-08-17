@@ -1,0 +1,108 @@
+{{- $fullname := include "redis.fullname" . }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}
+  labels:
+    {{- include "redis.labels" . | nindent 4 }}
+data:
+  fix-ip.sh: |
+    #!/bin/bash
+    CLUSTER_CONFIG="/var/lib/redis/nodes.conf"
+    if [ -f ${CLUSTER_CONFIG} ]; then
+      if [ -z "${POD_IP}" ]; then
+        echo "Unable to determine Pod IP address!"
+        exit 1
+      fi
+      echo "Updating my IP to ${POD_IP} in ${CLUSTER_CONFIG}"
+      sed -i.bak -e '/myself/ s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/'${POD_IP}'/' ${CLUSTER_CONFIG}
+    fi
+    exec "$@"
+
+  healthcheck.sh: |
+     #!/bin/bash
+     check_redis_health() {
+      redis-cli -a ${REDIS_PASSWORD} ping
+     }
+
+     check_redis_health
+
+  redis.conf: |
+{{- if .Values.clustermodel }}
+    cluster-enabled yes
+{{- end }}
+    cluster-config-file /var/lib/redis/nodes.conf
+    cluster-node-timeout 5000
+    dir /var/lib/redis
+    port 6379
+    maxmemory {{ include "redis.maxMemory" . | default "8GB" }}
+    maxmemory-policy noeviction
+    cluster-require-full-coverage no
+{{- if .Values.persistence.enabled }}
+    save 300 10
+    save 60 10000
+{{- end }}
+{{- if eq .Values.persistence.mode "RDB" }}
+    dbfilename dump.rdb
+{{- end }}
+{{- if eq .Values.persistence.mode "AOF" }}
+    appendonly yes
+    appendfsync everysec
+    appendfilename "appendonly.aof"
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 512mb
+{{- end }}
+{{- if eq .Values.persistence.mode "RDB+AOF" }}
+    dbfilename dump.rdb
+    appendonly yes
+    appendfsync everysec
+    appendfilename "appendonly.aof"
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 512mb
+{{- end }}
+
+    ignore-warnings ARM64-COW-BUG
+
+  init_cluster.sh: |
+    #!/bin/bash
+    set -eux
+    ips=($@)
+    function check_state(){
+      cluster_state=$(redis-cli -a ${REDIS_PASSWORD} -c  cluster info)
+
+      if [ $(echo ${cluster_state} | grep -c '^cluster_state:ok') -gt 0  ];then
+         echo "[$(date +'%F %T')] cluster is ok"
+         exit 0
+      fi
+    }
+    function create_cluster {
+        cluster_ips=()
+        {% raw %}
+        len=${#ips[@]}
+        {% endraw %}
+        for ((i=1; i<=${len}; i++))
+        do
+          index=$[i-1]
+          cluster_ips[${index}]=${ips[index]}:6379
+        done
+        echo "yes" | redis-cli -a ${REDIS_PASSWORD} -p 6379 --cluster create --cluster-replicas 0 ${cluster_ips[@]}
+
+    }
+
+    while true; do
+        export flag1=`redis-cli -a ${REDIS_PASSWORD} -h {{ $fullname }}-0.{{ $fullname }}.component.svc.cluster.local -c ping`
+        if [[ "${flag1}" ]]; then
+
+            create_cluster
+            if [ $? -eq 0 ];then
+              echo "initialize completed"
+              break
+            else
+              echo "initialize failed"
+              exit 2
+            fi
+        else
+            echo "sleep"
+            sleep 3
+        fi
+    done

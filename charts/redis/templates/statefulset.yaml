@@ -1,0 +1,146 @@
+{{- $fullname := include "redis.fullname" . }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullname }}
+  labels:
+    {{- include "redis.labels" . | nindent 4 }}
+spec:
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  selector:
+    matchLabels: 
+      {{- include "redis.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ $fullname }}
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+      {{- include "redis.labels" . | nindent 8 }}
+      annotations:
+      {{- toYaml .Values.podAnnotations | nindent 8 }}
+    spec:
+      enableServiceLinks: false
+    {{- range .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ . }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "common.image" (list . .Values.global.hostArch "redis") | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        {{- if .Values.property.clustermodel }}
+          command: ["/bin/bash"]
+          args:
+            - /etc/redis/fix-ip.sh
+            - redis-server
+            - /etc/redis/redis.conf
+            - --protected-mode no
+        {{- else }}
+          command: [ "/bin/bash", "-ce", "redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD} && tail -f /dev/null" ]
+        {{- end }}
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: password-secrets
+                  key: redis_admin_password
+          ports:
+            - name: redis
+              containerPort: {{ .Values.service.port.tcp }}
+          livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - bash
+                - /etc/redis/healthcheck.sh
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - /etc/redis/healthcheck.sh
+          resources:
+          {{- toYaml .Values.resources.redis | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/redis/
+              name: config
+        {{- if .Values.persistence.enabled }}
+            - mountPath: /var/lib/redis
+              name: local-redis-pvc
+        {{- end }}
+    {{- if .Values.service.enableServiceMonitor }}
+        - name: exporter
+          image: {{ include "common.image" (list . .Values.global.hostArch "exporter") | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          args:
+            - --debug
+            - --redis.addr=redis://127.0.0.1:6379
+            - --redis.password=$(REDIS_PASSWORD)
+          env:
+            - name: REDIS_ADDR
+              value: "redis://127.0.0.1:6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: password-secrets
+                  key: redis_admin_password
+          ports:
+            - name: http-metrics
+              containerPort: {{ .Values.service.port.metric }}
+          resources:
+          {{- toYaml .Values.resources.exporter | nindent 12 }}
+    {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ $fullname }}
+    {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: local-redis-pvc
+      spec:
+        storageClassName: "storageclass-local-redis"
+        resources:
+          requests:
+            storage: 10Gi
+        accessModes:
+          - ReadWriteOnce
+    {{- end }}

@@ -1,0 +1,22 @@
+{{- if .Values.service.enableServiceMonitor }}
+{{- $fullname := include "redis.fullname" . }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullname }}-monitor
+  namespace: {{ .Values.global.monitorNamespace }}
+  labels:
+    k8s-app: {{ $fullname }}
+spec:
+  jobLabel: k8s-app
+  endpoints:
+  - port: http-metrics
+    interval: 30s
+    honorLabels: true
+  selector:
+    matchLabels:
+      {{- include "redis.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+{{- end -}}

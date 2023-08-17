@@ -10,8 +10,8 @@
     {{- end -}}
 {{- end -}}
 {{- if .global }}
-    {{- if .global.dockerRegistry }}
-        {{- $registryName = .global.dockerRegistry -}}
+    {{- if .global.imageRegistry }}
+        {{- $registryName = .global.imageRegistry -}}
     {{- end -}}
 {{- end -}}
 {{- if $registryName }}
