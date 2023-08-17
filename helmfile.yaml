@@ -3,7 +3,9 @@ releases:
   - name: local-volume-provisioner
     namespace: kube-system
     chart: ./charts/local-volume-provisioner
-
   - name: mysql
     namespace: component
     chart: ./charts/mysql
+  - name: redis
+    namespace: component
+    chart: ./charts/redis

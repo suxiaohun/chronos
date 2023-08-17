@@ -33,9 +33,9 @@ image:
   repository:
     amd64:
       # -- redis amd64 image repo
-      redis: "infra/redis"
+      redis: "redis"
       # -- exporter arm64 image repo
-      exporter: "infra/redis-exporter"
+      exporter: "redis-exporter"
     arm64:
       # -- redis arm64 image repo
       redis: "infra/redis"
@@ -44,7 +44,7 @@ image:
   tag:
     amd64:
       # -- redis amd64 image tag
-      redis: "7.0.5-amd64"
+      redis: "7.2.0-amd64"
       # -- exporter amd64 image tag
       exporter: "v1.15.1-amd64"
     arm64:
@@ -86,7 +86,7 @@ service:
     # -- metrics port
     metric: 9121
   # -- enable servicemonitor or not
-  enableServiceMonitor: true
+  enableServiceMonitor: false
 
 resources:
   # -- redis resources

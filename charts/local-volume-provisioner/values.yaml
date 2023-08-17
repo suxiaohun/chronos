@@ -62,6 +62,9 @@ classes:
 - name: local-mysql
   hostDir: "/sususu/locals/mysql"
   storageClass: true
+- name: local-redis
+  hostDir: "/sususu/locals/redis"
+  storageClass: true
 
 
 

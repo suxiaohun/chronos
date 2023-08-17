@@ -137,7 +137,7 @@ spec:
     - metadata:
         name: local-redis-pvc
       spec:
-        storageClassName: "storageclass-local-redis"
+        storageClassName: "local-redis"
         resources:
           requests:
             storage: 10Gi
