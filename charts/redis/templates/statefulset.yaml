@@ -68,10 +68,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: password-secrets
-                  key: redis_admin_password
+              value: "123456"
           ports:
             - name: redis
               containerPort: {{ .Values.service.port.tcp }}
@@ -118,10 +115,7 @@ spec:
             - name: REDIS_ADDR
               value: "redis://127.0.0.1:6379"
             - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: password-secrets
-                  key: redis_admin_password
+              value: "123456"
           ports:
             - name: http-metrics
               containerPort: {{ .Values.service.port.metric }}
