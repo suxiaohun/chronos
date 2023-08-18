@@ -80,7 +80,7 @@ service:
     # -- tcp port
     tcp: 6379
     # -- tcp external nodePort
-    tcpNodePort: 31182
+    tcpNodePort: 30379
     # -- tcp bus port
     bus: 16379
     # -- metrics port
@@ -116,4 +116,4 @@ property:
   # -- use password authentication
   usePassword: true
   # -- open external tcp node port
-  nodePortEnabled: false
+  nodePortEnabled: true

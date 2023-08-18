@@ -6,20 +6,32 @@ metadata:
     {{- include "redis.labels" . | nindent 4 }}
     {{- include "redis.selectorLabels" . | nindent 4 }}
 spec:
-  {{- if .Values.property.nodePortEnabled }}
-  type: NodePort
-  {{- else }} 
   type: ClusterIP
   clusterIP: None
-  {{- end }}
   ports:
-  - name: server
-    port: {{ .Values.service.port.tcp }}
-    {{- if .Values.property.nodePortEnabled }}
-    nodePort: {{ .Values.service.port.tcpNodePort }}
-    {{- end }}
-  - name: http-metrics
-    port: {{ .Values.service.port.metric }}
-    protocol: TCP
-  selector: 
+    - name: server
+      port: {{ .Values.service.port.tcp }}
+    - name: http-metrics
+      port: {{ .Values.service.port.metric }}
+      protocol: TCP
+  selector:
     {{- include "redis.selectorLabels" . | nindent 4 }}
+
+{{- if .Values.property.nodePortEnabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "redis.fullname" . }}-np
+  labels:
+    {{- include "redis.labels" . | nindent 4 }}
+    {{- include "redis.selectorLabels" . | nindent 4 }}
+spec:
+  type: NodePort
+  ports:
+    - name: server
+      port: {{ .Values.service.port.tcp }}
+      nodePort: {{ .Values.service.port.tcpNodePort }}
+  selector:
+    {{- include "redis.selectorLabels" . | nindent 4 }}
+{{- end }}
