@@ -185,17 +185,11 @@ metrics:
     enabled: false
     additionalLabels: {}
 
-## Configure the service
-## ref: http://kubernetes.io/docs/user-guide/services/
+
 service:
   annotations: {}
-  ## Specify a service type
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types
-#  type: ClusterIP
-  type: NodePort
   port: 3306
   nodePort: 30306
-  # loadBalancerIP:
 
 ## Pods Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -249,3 +243,6 @@ initContainer:
     requests:
       memory: 10Mi
       cpu: 10m
+
+property:
+  nodePortEnabled: true
