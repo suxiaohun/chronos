@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "mysql.fullname" . }}
   namespace: {{ .Release.Namespace }}
@@ -14,8 +14,6 @@ metadata:
 {{- end }}
 
 spec:
-  strategy:
-{{ toYaml .Values.strategy | indent 4 }}
   selector:
     matchLabels:
       app: {{ template "mysql.fullname" . }}
@@ -166,11 +164,10 @@ spec:
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
         volumeMounts:
-        - name: data
-          mountPath: /var/lib/mysql
-          {{- if .Values.persistence.subPath }}
-          subPath: {{ .Values.persistence.subPath }}
-          {{- end }}
+        {{- if .Values.persistence.enabled }}
+          - mountPath: /var/lib/mysql
+            name: local-mysql-pvc
+        {{- end }}
         {{- if .Values.configurationFiles }}
         {{- range $key, $val := .Values.configurationFiles }}
         - name: configurations
@@ -248,12 +245,18 @@ spec:
           secretName: {{ .Values.ssl.secret }}
       {{- end }}
       - name: data
-      {{- if .Values.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default (include "mysql.fullname" .) }}
-      {{- else }}
-        emptyDir: {}
-      {{- end -}}
       {{- if .Values.extraVolumes }}
 {{ tpl .Values.extraVolumes . | indent 6 }}
       {{- end }}
+    {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: local-mysql-pvc
+      spec:
+        storageClassName: "local-mysql"
+        resources:
+          requests:
+            storage: 10Gi
+        accessModes:
+          - ReadWriteOnce
+    {{- end }}

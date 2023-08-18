@@ -56,7 +56,7 @@ spec:
             - /etc/redis/redis.conf
             - --protected-mode no
         {{- else }}
-          command: [ "/bin/bash", "-ce", "redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD} && tail -f /dev/null" ]
+          command: [ "/bin/bash", "-ce", "redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}" ]
         {{- end }}
           env:
             - name: POD_IP
@@ -72,33 +72,13 @@ spec:
           ports:
             - name: redis
               containerPort: {{ .Values.service.port.tcp }}
-          livenessProbe:
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            # One second longer than command timeout should prevent generation of zombie processes.
-            timeoutSeconds: 6
-            successThreshold: 1
-            failureThreshold: 5
-            exec:
-              command:
-                - bash
-                - /etc/redis/healthcheck.sh
-          readinessProbe:
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            # One second longer than command timeout should prevent generation of zombie processes.
-            timeoutSeconds: 6
-            successThreshold: 1
-            failureThreshold: 5
-            exec:
-              command:
-                - sh
-                - /etc/redis/healthcheck.sh
           resources:
           {{- toYaml .Values.resources.redis | nindent 12 }}
           volumeMounts:
+        {{- if .Values.property.configEnabled }}
             - mountPath: /etc/redis/
               name: config
+        {{- end }}
         {{- if .Values.persistence.enabled }}
             - mountPath: /var/lib/redis
               name: local-redis-pvc

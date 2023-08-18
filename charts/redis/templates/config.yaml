@@ -39,6 +39,7 @@ data:
     maxmemory-policy noeviction
     cluster-require-full-coverage no
 {{- if .Values.persistence.enabled }}
+    save 900 1
     save 300 10
     save 60 10000
 {{- end }}

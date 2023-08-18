@@ -96,7 +96,7 @@ resources:
       memory: "9Gi"
     requests:
       cpu: "1"
-      memory: "8Gi"
+      memory: "2Gi"
   # -- exporter resources
   exporter:
     limits:
@@ -108,9 +108,10 @@ resources:
 
 persistence:
   enabled: true
-  mode: "RDB"
+  mode: "RDB+AOF"
 
 property:
+  configEnabled: true
   # -- cluster mode or single mode
   clustermodel: false
   # -- use password authentication
