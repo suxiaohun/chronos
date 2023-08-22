@@ -3,9 +3,7 @@
 # Declare variables to be passed into your templates.
 
 global:
-  # -- machine architecture
   hostArch: "amd64"
-  # -- docker registry address
   imageRegistry: "10.4.243.51:5000"
   # -- prometheus deploy namespace
   monitorNamespace: "monitoring"

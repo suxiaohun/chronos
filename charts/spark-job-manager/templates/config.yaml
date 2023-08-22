@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "spark-job-manager.fullname" . }}
+  labels:
+    {{- include "spark-job-manager.labels" . | nindent 4 }}
+data:
+  test.txt: |
+    ahahahhahahah
+  test.py: |
+    from pyspark.sql import SparkSession
+
+
+    spark = SparkSession.builder \
+    .appName("PythonSparkJob") \
+    .getOrCreate()
+
+
+    data = spark.read.text("/app/config/test.txt")
+    word_counts = data.rdd.flatMap(lambda line: line[0].split(" ")) \
+      .map(lambda word: (word, 1)) \
+      .reduceByKey(lambda a, b: a + b)
+
+
+    for (word, count) in word_counts.collect():
+      print(f"{word}: {count}")
+
+
+      spark.stop()
+
