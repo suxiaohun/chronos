@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "cmak.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: zk
       port: 2181
@@ -15,5 +15,6 @@ spec:
       port: {{ .Values.ui.port }}
       targetPort: http
       protocol: TCP
+      nodePort: 30900
   selector:
     {{- include "cmak.selectorLabels" . | nindent 4 }}

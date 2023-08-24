@@ -12,4 +12,7 @@ releases:
   - name: spark-manager
     namespace: batch
     chart: ./charts/spark-job-manager
+  - name: cmak
+    namespace: cmak
+    chart: ./charts/cmak-operator
 

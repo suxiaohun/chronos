@@ -39,7 +39,12 @@ cmak:
     saslMechanism: null
     jaasConfig: null
 
-  clusters: []
+  clusters:
+    - name: "cluster-olap"
+      kafkaVersion: "2.2.2" # <2>
+      curatorConfig:
+        zkConnect: "zookeeper-default-0.component:2181,zookeeper-default-1.component:2181,zookeeper-default-2.component:2181"
+
 
 reconcile:
   image:
