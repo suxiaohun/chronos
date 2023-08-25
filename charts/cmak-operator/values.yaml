@@ -48,7 +48,7 @@ cmak:
       enabled: true
       jmxPass: "CXVjNRzfBu5cGZm"
       jmxUser: admin
-      jmxEnabled: true
+      jmxEnabled: false
       kafkaVersion: 2.2.0
       pollConsumers: true
       filterConsumers: false
