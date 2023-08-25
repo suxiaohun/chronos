@@ -18,6 +18,8 @@ spec:
       {{- end }}
     spec:
       restartPolicy: Never
+      securityContext:
+        { }
       volumes:
         - name: {{ $nm }}-clusters
           configMap:
@@ -33,7 +35,7 @@ spec:
       {{- end }}
       containers:
         - name: setup
-          image: "{{ .Values.reconcile.image.repository }}:{{ .Values.reconcile.image.tag }}"
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.reconcile.image.repository }}:{{ .Values.reconcile.image.tag }}"
           imagePullPolicy: "{{ .Values.reconcile.image.pullPolicy }}"
           args:
             - '{{ .Values.reconcile.overwriteZk | ternary "--" "--no-" }}overwrite-zk'

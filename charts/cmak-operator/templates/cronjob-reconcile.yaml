@@ -37,9 +37,11 @@ spec:
           {{- with .Values.tolerations }}
           tolerations: {{  toYaml . | nindent 12 }}
           {{- end }}
+          securityContext:
+            { }
           containers:
             - name: setup
-              image: "{{ .Values.reconcile.image.repository }}:{{ .Values.reconcile.image.tag }}"
+              image: "{{ .Values.global.imageRegistry }}/{{ .Values.reconcile.image.repository }}:{{ .Values.reconcile.image.tag }}"
               imagePullPolicy: "{{ .Values.reconcile.image.pullPolicy }}"
               args:
                 - '{{ .Values.reconcile.overwriteZk | ternary "--" "--no-" }}overwrite-zk'

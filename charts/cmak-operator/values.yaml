@@ -1,4 +1,8 @@
 # mirroring CMAK UI preferences for Kafka clusters
+global:
+  hostArch: "amd64"
+  imageRegistry: "10.4.243.51:5000"
+
 cmak:
   clustersCommon:
     curatorConfig:
@@ -40,15 +44,25 @@ cmak:
     jaasConfig: null
 
   clusters:
-    - name: "cluster-olap"
-      kafkaVersion: "2.2.2" # <2>
+    - jmxSsl: true
+      enabled: true
+      jmxPass: "CXVjNRzfBu5cGZm"
+      jmxUser: admin
+      jmxEnabled: true
+      kafkaVersion: 2.2.0
+      pollConsumers: true
+      filterConsumers: false
+      logkafkaEnabled: false
+      displaySizeEnabled: false
+      activeOffsetCacheEnabled: true
+      name: "cluster-olap"
       curatorConfig:
-        zkConnect: "zookeeper-default-0.component:2181,zookeeper-default-1.component:2181,zookeeper-default-2.component:2181"
+        zkConnect: "zookeeper-default-2.component:2181/kafka-olap"
 
 
 reconcile:
   image:
-    repository: "ghcr.io/eshepelyuk/dckr/cmak2zk"
+    repository: "cmak2zk"
     tag: "1.2.0"
     pullPolicy: IfNotPresent
   schedule: "*/3 * * * *"
@@ -68,7 +82,7 @@ reconcile:
 # various settings for CMAK UI container and CMAK application
 ui:
   image:
-    repository: "ghcr.io/eshepelyuk/dckr/cmak-3.0.0.6"
+    repository: "cmak-3.0.0.6"
     tag: "1.2.0"
     pullPolicy: IfNotPresent
   port: 9000

@@ -36,9 +36,11 @@ spec:
       {{- with .Values.tolerations }}
       tolerations: {{  toYaml . | nindent 8 }}
       {{- end }}
+      securityContext:
+        { }
       containers:
         - name: zk
-          image: "{{ .Values.zk.image.repository }}:{{ .Values.zk.image.tag }}"
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.zk.image.repository }}:{{ .Values.zk.image.tag }}"
           imagePullPolicy: "{{ .Values.zk.image.pullPolicy }}"
           ports:
           - name: zk
@@ -65,7 +67,7 @@ spec:
             {{- end }}
           {{- end }}
         - name: ui
-          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
           imagePullPolicy: "{{ .Values.ui.image.pullPolicy }}"
           ports:
           - name: http
