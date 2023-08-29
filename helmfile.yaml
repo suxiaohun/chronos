@@ -9,10 +9,10 @@ releases:
   - name: redis
     namespace: component
     chart: ./charts/redis
-  - name: spark-manager
-    namespace: batch
-    chart: ./charts/spark-job-manager
-  - name: cmak
-    namespace: cmak
-    chart: ./charts/cmak-operator
+#  - name: spark-manager
+#    namespace: batch
+#    chart: ./charts/spark-job-manager
+#  - name: cmak
+#    namespace: cmak
+#    chart: ./charts/cmak-operator
 
