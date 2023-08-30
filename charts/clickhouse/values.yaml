@@ -100,7 +100,7 @@ image:
   debug: false
 ## @param shards Number of ClickHouse shards to deploy
 ##
-shards: 2
+shards: 1
 
 ## @param replicaCount Number of ClickHouse replicas per shard to deploy
 ## if keeper enable, same as keeper count, keeper cluster by shards.
