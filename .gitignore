@@ -1,1 +1,3 @@
 .idea
+services/migrate_service/migrate-amd64
+services/migrate_service/migrations/clickhouse/*

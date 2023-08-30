@@ -12,6 +12,9 @@ releases:
   - name: clickhouse
     namespace: component
     chart: ./charts/clickhouse
+  - name: migrate
+    namespace: component
+    chart: ./charts/migrate-service
 #  - name: spark-manager
 #    namespace: batch
 #    chart: ./charts/spark-job-manager

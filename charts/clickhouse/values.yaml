@@ -100,12 +100,12 @@ image:
   debug: false
 ## @param shards Number of ClickHouse shards to deploy
 ##
-shards: 1
+shards: 3
 
 ## @param replicaCount Number of ClickHouse replicas per shard to deploy
 ## if keeper enable, same as keeper count, keeper cluster by shards.
 ##
-replicaCount: 3
+replicaCount: 1
 ## @param containerPorts.http ClickHouse HTTP container port
 ## @param containerPorts.https ClickHouse HTTPS container port
 ## @param containerPorts.tcp ClickHouse TCP container port
@@ -226,8 +226,8 @@ containerSecurityContext:
 ## @param auth.existingSecretKey Name of the key inside the existing secret
 ##
 auth:
-  username: default
-  password: ""
+  username: admin
+  password: "KB9CGlSE9v"
   existingSecret: ""
   existingSecretKey: ""
 
@@ -258,7 +258,7 @@ defaultConfigurationOverrides: |
     {{- if or (ne (int .Values.shards) 1) (ne (int .Values.replicaCount) 1)}}
     <!-- Cluster configuration - Any update of the shards and replicas requires helm upgrade -->
     <remote_servers>
-      <default>
+      <clicks_cluster>
         {{- $shards := $.Values.shards | int }}
         {{- range $shard, $e := until $shards }}
         <shard>
@@ -273,7 +273,7 @@ defaultConfigurationOverrides: |
             {{- end }}
         </shard>
         {{- end }}
-      </default>
+      </clicks_cluster>
     </remote_servers>
     {{- end }}
     {{- if .Values.keeper.enabled }}
