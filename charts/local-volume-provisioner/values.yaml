@@ -65,6 +65,9 @@ classes:
 - name: local-redis
   hostDir: "/sususu/locals/redis"
   storageClass: true
+- name: local-clickhouse
+  hostDir: "/sususu/locals/clickhouse"
+  storageClass: true
 
 
 
