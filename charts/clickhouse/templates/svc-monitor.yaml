@@ -1,0 +1,21 @@
+{{- if .Values.service.enableServiceMonitor }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "clickhouse.fullname" . }}-servicemonitor
+  namespace: {{ .Values.global.monitorNamespace }}
+  labels:
+    {{- include "clickhouse.labels" . | nindent 4 }}
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchLabels:
+      {{- include "clickhouse.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  endpoints:
+  - port: metrics
+    interval: 30s
+    honorLabels: true
+{{- end }}

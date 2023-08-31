@@ -1,0 +1,344 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "affinity": {
+            "type": "object"
+        },
+        "dep": {
+            "type": "object",
+            "properties": {
+                "kafka": {
+                    "type": "object",
+                    "properties": {
+                        "auth": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "passwordRef": {
+                                    "type": "string"
+                                },
+                                "secretName": {
+                                    "type": "string"
+                                },
+                                "usernameRef": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "nameSuffix": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        },
+                        "replicas": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "redis": {
+                    "type": "object",
+                    "properties": {
+                        "auth": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "passwordRef": {
+                                    "type": "string"
+                                },
+                                "secretName": {
+                                    "type": "string"
+                                },
+                                "usernameRef": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "nameSuffix": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "zk": {
+                    "type": "object",
+                    "properties": {
+                        "nameSuffix": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        },
+                        "replicas": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "global": {
+            "type": "object",
+            "properties": {
+                "dockerRegistry": {
+                    "type": "string"
+                },
+                "hostArch": {
+                    "type": "string"
+                },
+                "isViper": {
+                    "type": "boolean"
+                },
+                "monitorNamespace": {
+                    "type": "string"
+                }
+            }
+        },
+        "image": {
+            "type": "object",
+            "properties": {
+                "pullPolicy": {
+                    "type": "string"
+                },
+                "pullSecrets": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "repository": {
+                    "type": "object",
+                    "properties": {
+                        "amd64": {
+                            "type": "object",
+                            "properties": {
+                                "busybox": {
+                                    "type": "string"
+                                },
+                                "clickhouse": {
+                                    "type": "string"
+                                },
+                                "exporter": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "arm64": {
+                            "type": "object",
+                            "properties": {
+                                "busybox": {
+                                    "type": "string"
+                                },
+                                "clickhouse": {
+                                    "type": "string"
+                                },
+                                "exporter": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tag": {
+                    "type": "object",
+                    "properties": {
+                        "amd64": {
+                            "type": "object",
+                            "properties": {
+                                "busybox": {
+                                    "type": "string"
+                                },
+                                "clickhouse": {
+                                    "type": "string"
+                                },
+                                "exporter": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "arm64": {
+                            "type": "object",
+                            "properties": {
+                                "busybox": {
+                                    "type": "string"
+                                },
+                                "clickhouse": {
+                                    "type": "string"
+                                },
+                                "exporter": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "init": {
+            "type": "object",
+            "properties": {
+                "databases": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "nameSuffix": {
+            "type": "string"
+        },
+        "nodeSelector": {
+            "type": "object"
+        },
+        "persistence": {
+            "type": "object",
+            "properties": {
+                "storageClass": {
+                    "type": "string"
+                },
+                "volumeSize": {
+                    "type": "string"
+                }
+            }
+        },
+        "podAnnotations": {
+            "type": "object",
+            "properties": {
+                "pod.alpha.kubernetes.io/initialized": {
+                    "type": "string"
+                }
+            }
+        },
+        "podSecurityContext": {
+            "type": "object"
+        },
+        "property": {
+            "type": "object",
+            "properties": {
+                "kubePodsSubnet": {
+                    "type": "string"
+                },
+                "maxMemoryUsage": {
+                    "type": "string"
+                },
+                "restPortExternalOpen": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "replicaCount": {
+            "type": "integer"
+        },
+        "resources": {
+            "type": "object",
+            "properties": {
+                "amd64": {
+                    "type": "object",
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "cpu": {
+                                    "type": "string"
+                                },
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "cpu": {
+                                    "type": "string"
+                                },
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "arm64": {
+                    "type": "object",
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "cpu": {
+                                    "type": "string"
+                                },
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "cpu": {
+                                    "type": "string"
+                                },
+                                "memory": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "securityContext": {
+            "type": "object"
+        },
+        "service": {
+            "type": "object",
+            "properties": {
+                "enableServiceMonitor": {
+                    "type": "boolean"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "internal": {
+                            "type": "integer"
+                        },
+                        "metrics": {
+                            "type": "integer"
+                        },
+                        "rest": {
+                            "type": "integer"
+                        },
+                        "restExternal": {
+                            "type": "integer"
+                        },
+                        "rpc": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "tolerations": {
+            "type": "array"
+        }
+    }
+}

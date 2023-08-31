@@ -1,0 +1,268 @@
+{{- $fullname := include "clickhouse.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-config
+  labels:
+    {{- include "clickhouse.labels" . | nindent 4 }}
+data:
+  remote_servers.xml: |-
+    <yandex>
+      <remote_servers incl="clickhouse_remote_servers">
+        <clicks_cluster>
+{{- range $i, $m := until (int .Values.replicaCount) }}          
+          <shard>
+            <internal_replication>true</internal_replication>
+            <weight>1</weight>
+            <replica>
+                <default_database>default</default_database>
+                <host>{{ $fullname }}-{{ $i }}.{{ $fullname }}.{{ $.Release.Namespace }}.svc.cluster.local</host>
+                <port>9000</port>
+            </replica>
+          </shard>
+{{- end }}
+        </clicks_cluster>
+      </remote_servers>
+    </yandex>    
+  zookeeper.xml: |-
+    <yandex>
+      <zookeeper incl="zookeeper-servers">
+{{- range $i, $m := until (int .Values.dep.zk.replicas) }}
+        <node>
+            <host>zookeeper-{{ $.Values.dep.zk.nameSuffix }}-{{ $i }}.{{ $.Values.dep.zk.namespace }}.svc.cluster.local</host>
+            <port>2181</port>
+        </node>
+{{- end }}
+      </zookeeper>
+    </yandex>    
+  kafka.xml: |-
+    <yandex>
+      <kafka>
+        <security_protocol>sasl_plaintext</security_protocol>
+        <sasl_mechanism>PLAIN</sasl_mechanism>
+        <sasl_username>#KAFKA_USERNAME</sasl_username>
+        <sasl_password>#KAFKA_PASSWORD</sasl_password>
+      </kafka>
+    </yandex>
+  users.xml: |-
+    <yandex>
+      <profiles>
+        <admin>
+          <max_memory_usage>{{ .Values.property.maxMemoryUsage }}</max_memory_usage>
+          <use_uncompressed_cache>0</use_uncompressed_cache>
+          <load_balancing>random</load_balancing>
+          <log_queries>1</log_queries>
+          <skip_unavailable_shards>1</skip_unavailable_shards>
+          <distributed_product_mode>local</distributed_product_mode>
+        </admin>
+        <default>                                  
+          <max_partitions_per_insert_block>5000</max_partitions_per_insert_block>
+        </default>
+      </profiles>
+      <users>
+        <admin>
+          <password_sha256_hex>#ADMIN_PASSWORD</password_sha256_hex>
+          <profile>admin</profile>
+          <quota>default</quota>
+          <networks>
+            <ip>::/0</ip>
+          </networks>
+        </admin>
+        <default>
+          <networks>
+            <ip>{{ .Values.property.kubePodsSubnet }}</ip>
+          </networks>
+        </default>
+      </users>
+      <quotas>
+        <default>
+          <interval>
+            <duration>3600</duration>
+            <queries>0</queries>
+            <errors>0</errors>
+            <result_rows>0</result_rows>
+            <read_rows>0</read_rows>
+            <execution_time>0</execution_time>
+          </interval>
+        </default>
+      </quotas>
+    <logger>
+        <console>1</console>
+    </logger>
+    </yandex>
+{{- if .Values.dep.redis.enabled }}
+  extern_redis_config.xml: |-
+    <extern_redis>
+      <host>{{ include "redis.endpoint" . }}</host>
+      <port>{{ default 6379 .Values.dep.redis.servicePort }}</port>
+      <password>#REDIS_ADMIN_PASSWORD</password>
+    </extern_redis>
+{{- end }}
+  config.xml: |-
+    <?xml version="1.0"?>
+    <yandex>
+        <logger>
+            <level>trace</level>
+            <console>true</console>
+            <log remove="remove"/>
+            <errorlog remove="remove"/>
+            <size>1000M</size>
+            <count>10</count>
+        </logger>
+        <http_port>8123</http_port>
+        <tcp_port>9000</tcp_port>
+        <mysql_port>9004</mysql_port>
+        <interserver_http_port>9009</interserver_http_port>
+        <listen_host>::</listen_host>
+        <max_connections>4096</max_connections>
+        <keep_alive_timeout>3</keep_alive_timeout>
+        <max_concurrent_queries>500</max_concurrent_queries>
+        <max_server_memory_usage>0</max_server_memory_usage>
+        <max_thread_pool_size>10000</max_thread_pool_size>
+        <max_server_memory_usage_to_ram_ratio>0.9</max_server_memory_usage_to_ram_ratio>
+        <total_memory_profiler_step>4194304</total_memory_profiler_step>
+        <total_memory_tracker_sample_probability>0</total_memory_tracker_sample_probability>
+        <uncompressed_cache_size>8589934592</uncompressed_cache_size>
+        <mark_cache_size>5368709120</mark_cache_size>
+        <path>/var/lib/clickhouse/</path>
+        <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+        <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+        <access_control_path>/var/lib/clickhouse/access/</access_control_path>
+        <users_config>users.xml</users_config>
+        <default_profile>default</default_profile>
+        <default_database>default</default_database>
+        <mlock_executable>true</mlock_executable>
+        <remote_servers incl="clickhouse_remote_servers">
+        </remote_servers>
+        <remote_url_allow_hosts>
+        </remote_url_allow_hosts>
+        <zookeeper incl="zookeeper-servers" optional="true" />
+        <macros incl="macros" optional="true" />
+        <builtin_dictionaries_reload_interval>3600</builtin_dictionaries_reload_interval>
+        <max_session_timeout>3600</max_session_timeout>
+        <default_session_timeout>60</default_session_timeout>
+        <query_log>
+            <database>system</database>
+            <table>query_log</table>
+            <partition_by>toYYYYMM(event_date)</partition_by>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+        </query_log>
+        <trace_log>
+            <database>system</database>
+            <table>trace_log</table>
+            <partition_by>toYYYYMM(event_date)</partition_by>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+        </trace_log>
+        <query_thread_log>
+            <database>system</database>
+            <table>query_thread_log</table>
+            <partition_by>toYYYYMM(event_date)</partition_by>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+        </query_thread_log>
+        <metric_log>
+            <database>system</database>
+            <table>metric_log</table>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+            <collect_interval_milliseconds>1000</collect_interval_milliseconds>
+        </metric_log>
+        <asynchronous_metric_log>
+            <database>system</database>
+            <table>asynchronous_metric_log</table>
+            <flush_interval_milliseconds>60000</flush_interval_milliseconds>
+        </asynchronous_metric_log>
+        <dictionaries_config>*_dictionary.xml</dictionaries_config>
+        <extern_redis_config>extern_redis_config.xml</extern_redis_config>
+        <compression incl="clickhouse_compression">
+        </compression>
+        <distributed_ddl>
+            <path>/clickhouse/task_queue/ddl</path>
+        </distributed_ddl>
+        <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+    </yandex>
+
+  pre_init.sh: |-
+    #!/usr/bin/env bash
+    set -x
+    
+    kafka_username=${KAFKA_USERNAME:-kafka}
+    kafka_password=${KAFKA_PASSWORD:-kafka}
+    ck_password=${CLICKHOUSE_ADMIN_PASSWORD:-clickhouse}
+    redis_password=${REDIS_ADMIN_PASSWORD:-redis}
+
+    if [ -f /tmp/clickhouse/kafka.xml ]; then
+        cp /tmp/clickhouse/kafka.xml /etc/clickhouse-server/config.d/kafka.xml
+        sed -i "s/#KAFKA_USERNAME/$kafka_username/" /etc/clickhouse-server/config.d/kafka.xml || true
+        sed -i "s/#KAFKA_PASSWORD/$kafka_password/" /etc/clickhouse-server/config.d/kafka.xml || true
+    fi
+
+    if [ -f /tmp/clickhouse/users.xml ]; then
+        cp /tmp/clickhouse/users.xml /etc/clickhouse-server/users.d/users.xml
+        admin_password=$(echo -n "$ck_password" | sha256sum | tr -d '-' | awk '$1=$1')
+        sed -i "s/#ADMIN_PASSWORD/$admin_password/" /etc/clickhouse-server/users.d/users.xml || true
+    fi
+
+    if [ -f /tmp/clickhouse/extern_redis_config.xml ]; then
+        cp /tmp/clickhouse/extern_redis_config.xml /etc/clickhouse-server/extern_redis_config.xml
+        sed -i "s/#REDIS_ADMIN_PASSWORD/$redis_password/" /etc/clickhouse-server/extern_redis_config.xml || true
+    fi
+  init_component.sh: |-
+    #!/usr/bin/env bash
+    set -x
+    
+    clickhouse_replicas={{ .Values.replicaCount }}
+    databases='{{ toJson .Values.init.databases }}'
+    databases_len=$( echo "$databases" | jq -r ". | length" )
+    APISERVER=https://kubernetes.default.svc
+    SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
+    NAMESPACE=$(cat ${SERVICEACCOUNT}/namespace)
+    TOKEN=$(cat ${SERVICEACCOUNT}/token)
+    CACERT=${SERVICEACCOUNT}/ca.crt
+
+
+    function create_databases {
+        ck_address=$1 
+        for i in $(seq 1 $databases_len);do
+          index=$((i-1))
+
+          database=`echo "$databases" | jq -r ".[$index].name"`
+          echo "create database IF NOT EXISTS $database" | curl http://$CLICKHOUSE_ADMIN_USERNAME:$CLICKHOUSE_ADMIN_PASSWORD@$ck_address:8123/ --data-binary @- || true
+        done
+    }
+    
+    for ((i=0; i<120; i++));
+    do
+      endpoints=$(curl -s --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/namespaces/component/endpoints/{{ $fullname }} | jq .subsets[].addresses[].ip | sed 's/\"//g')
+      endpoints_count=$(echo $endpoints | wc -w)
+      if [[ $endpoints_count -lt $clickhouse_replicas ]];then
+         echo "clickhouse not ready, waiting..."
+         sleep 10
+         continue
+      else
+         break
+      fi
+    done
+
+
+    for ((i=0; i<120; i++));
+    do
+        endpoints=$(curl -s --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/namespaces/component/endpoints/clickhouse-olap | jq .subsets[].addresses[].ip | sed 's/\"//g')
+        for ep in $endpoints;
+        do
+            ck_address=$(echo $ep | sed 's/\"//g')
+            ck_status=$(curl -s http://$CLICKHOUSE_ADMIN_USERNAME:$CLICKHOUSE_ADMIN_PASSWORD@$ck_address:8123/ping)
+            if [[ $ck_status != *Ok* ]];then
+               sleep 5
+               break 1
+            else
+               continue
+            fi 
+        done
+    done
+
+
+    for ep in $endpoints;
+    do
+        ep=$(echo $ep | sed 's/\"//g')
+        echo "init $ep"
+        create_databases $ep
+    done

@@ -1,0 +1,64 @@
+{{- $fullname := include "clickhouse.fullname" . }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullname }}-initializer
+  labels:
+    {{- include "clickhouse.labels" . | nindent 4 }}
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 10
+  template:
+    metadata:
+      name: {{ $fullname }}-initializer
+      labels:
+        app.kubernetes.io/instance: {{ $fullname }}-initializer
+    spec:
+      serviceAccountName: {{ $fullname }}
+      restartPolicy: Never
+      {{- range .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+      initContainers:
+      - name: wait
+        image: {{ include "busybox.image" . | quote }}
+        imagePullPolicy: "IfNotPresent"
+        command:
+        - sh
+        - -c
+        - |
+          trap exit TERM
+          host={{ $fullname }}.{{ .Release.Namespace }}.svc.cluster.local
+          port=8123
+          while true; do
+            nc -vz -w 3 $host $port
+            if [ $? -eq 0 ]; then
+              break
+            else
+              echo "info: failed to connect to $host:$port, sleep 1 second then retry"
+              sleep 1
+            fi
+          done
+          echo "info: successfully connected to $host:$port, able to initialize Kafka now"
+      containers:
+      - name: init
+        image: {{ include "clickhouse.image" . | quote }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command: ["/bin/bash","-ec","/init_component.sh"]
+        env:
+        - name: CLICKHOUSE_ADMIN_USERNAME
+          value: "{{ .Values.init.username }}"
+        - name: CLICKHOUSE_ADMIN_PASSWORD
+          value: "{{ .Values.init.password }}"
+        volumeMounts:
+        - name: clickhouse-config
+          subPath: "init_component.sh"
+          mountPath: /init_component.sh
+          readOnly: true
+      volumes:
+      - name: clickhouse-config
+        configMap:
+          name: {{ $fullname }}-config
+          defaultMode: 0755
