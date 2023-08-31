@@ -39,6 +39,8 @@ spec:
           env:
             - name: TZ
               value: Asia/Shanghai
+            - name: KAFKA_BROKER_LIST
+              value: kafka-olap-0.kafka-olap.component.svc.cluster.local:9092,kafka-olap-1.kafka-olap.component.svc.cluster.local:9092,kafka-olap-2.kafka-olap.component.svc.cluster.local:9092
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
