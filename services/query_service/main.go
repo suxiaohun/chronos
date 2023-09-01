@@ -14,24 +14,24 @@ func main() {
 		panic((err))
 	}
 
+	table := "bdp.tracks_local"
 	ctx := context.Background()
-	rows, err := conn.Query(ctx, "SELECT name,toString(uuid) as uuid_str FROM system.tables LIMIT 5")
+	rows, err := conn.Query(ctx, "SELECT count(*)  FROM "+table+" LIMIT 1")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for rows.Next() {
 		var (
-			name, uuid string
+			count uint64
 		)
 		if err := rows.Scan(
-			&name,
-			&uuid,
+			&count,
 		); err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("name: %s, uuid: %s",
-			name, uuid)
+		log.Printf("table: %s, total_count: %v",
+			table, count)
 	}
 
 }
