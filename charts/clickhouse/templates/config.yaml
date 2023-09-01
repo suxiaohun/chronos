@@ -1,4 +1,5 @@
 {{- $fullname := include "clickhouse.fullname" . -}}
+{{- $initvalues :=  .Values.init -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,7 +16,9 @@ data:
             <internal_replication>true</internal_replication>
             <weight>1</weight>
             <replica>
-                <default_database>default</default_database>
+                <default_database>bdp</default_database>
+                <user>{{ $initvalues.username }}</user>
+                <password>{{ $initvalues.password }}</password>
                 <host>{{ $fullname }}-{{ $i }}.{{ $fullname }}.{{ $.Release.Namespace }}.svc.cluster.local</host>
                 <port>9000</port>
             </replica>
