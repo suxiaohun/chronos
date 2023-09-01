@@ -11,10 +11,10 @@ import (
 func main() {
 	conn, err := connect()
 	if err != nil {
-		panic((err))
+		panic(err)
 	}
 
-	table := "bdp.tracks_local"
+	table := "bdp.tracks_all"
 	ctx := context.Background()
 	rows, err := conn.Query(ctx, "SELECT count(*)  FROM "+table+" LIMIT 1")
 	if err != nil {
