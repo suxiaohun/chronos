@@ -68,6 +68,9 @@ classes:
 - name: local-clickhouse
   hostDir: "/sususu/locals/clickhouse"
   storageClass: true
+- name: local-kafka
+  hostDir: "/sususu/locals/kafka"
+  storageClass: true
 
 
 
