@@ -38,10 +38,8 @@ spec:
             - containerPort: 9092
             - containerPort: 9093
           env:
-            - name: SHARE_DIR
-              value: /mnt/kafka
-            - name: CLUSTER_ID
-              value: oh-sxaDRTcyAr6pFRbXyzA
+            - name: KAFKA_CLUSTER_ID
+              value: 'WmCAg2QASfOft6rmzGg-HA'
             - name: DEFAULT_REPLICATION_FACTOR
               value: '3'
             - name: DEFAULT_MIN_INSYNC_REPLICAS

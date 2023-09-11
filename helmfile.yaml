@@ -12,6 +12,9 @@ releases:
   - name: clickhouse
     namespace: component
     chart: ./charts/clickhouse
+  - name: kafka
+    namespace: component
+    chart: ./charts/kafka
   - name: migrate
     namespace: component
     chart: ./charts/migrate-service
