@@ -18,6 +18,9 @@ releases:
   - name: migrate
     namespace: component
     chart: ./charts/migrate-service
+  - name: go-dev
+    namespace: default
+    chart: ./charts/go-dev
 #  - name: spark-manager
 #    namespace: batch
 #    chart: ./charts/spark-job-manager
