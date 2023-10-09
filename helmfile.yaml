@@ -21,6 +21,9 @@ releases:
   - name: go-dev
     namespace: default
     chart: ./charts/go-dev
+  - name: darkice
+    namespace: default
+    chart: ./charts/darkice
 #  - name: spark-manager
 #    namespace: batch
 #    chart: ./charts/spark-job-manager
