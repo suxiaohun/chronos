@@ -1,4 +1,4 @@
-# Default values for go-dev.
+# Default values for darkice.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
@@ -8,10 +8,10 @@ global:
 replicaCount: 1
 
 image:
-  repository: golang
+  repository: darkice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.19.debug"
+  tag: "v0.0.1"
 
 imagePullSecrets: []
 nameOverride: ""
