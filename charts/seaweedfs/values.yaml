@@ -37,7 +37,7 @@ global:
     WEED_CLUSTER_SW_FILER: "seaweedfs-filer-client.seaweedfs:8888"
 
 image:
-  registry: ""
+  registry: "10.4.243.51:5000/"
   repository: ""
 
 master:
@@ -543,7 +543,7 @@ filer:
     auditLogConfig: {}
 
 s3:
-  enabled: false
+  enabled: true
   repository: null
   imageName: null
   imageTag: "3.57"
