@@ -24,6 +24,9 @@ releases:
   - name: darkice
     namespace: default
     chart: ./charts/darkice
+  - name: seaweedfs
+    namespace: component
+    chart: ./charts/seaweedfs
 #  - name: spark-manager
 #    namespace: batch
 #    chart: ./charts/spark-job-manager
