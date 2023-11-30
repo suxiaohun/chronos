@@ -9,24 +9,24 @@ releases:
   - name: redis
     namespace: component
     chart: ./charts/redis
-  - name: clickhouse
-    namespace: component
-    chart: ./charts/clickhouse
+#  - name: clickhouse
+#    namespace: component
+#    chart: ./charts/clickhouse
   - name: kafka
     namespace: component
     chart: ./charts/kafka
-  - name: migrate
-    namespace: component
-    chart: ./charts/migrate-service
-  - name: go-dev
+#  - name: migrate
+#    namespace: component
+#    chart: ./charts/migrate-service
+  - name: golang-dev
     namespace: default
-    chart: ./charts/go-dev
+    chart: ./charts/golang-dev
   - name: darkice
     namespace: default
     chart: ./charts/darkice
-  - name: seaweedfs
-    namespace: component
-    chart: ./charts/seaweedfs
+#  - name: seaweedfs
+#    namespace: component
+#    chart: ./charts/seaweedfs
 #  - name: spark-manager
 #    namespace: batch
 #    chart: ./charts/spark-job-manager

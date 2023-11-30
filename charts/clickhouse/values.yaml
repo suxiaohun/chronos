@@ -132,8 +132,8 @@ resources:
       cpu: "1"
       memory: "2Gi"
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: "8"
+      memory: "20Gi"
   # -- arm64 resources
   arm64:
     requests:

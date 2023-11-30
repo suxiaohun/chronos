@@ -1,17 +1,17 @@
-# Default values for go-dev.
+# Default values for kafka.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
   hostArch: "amd64"
   imageRegistry: "10.4.243.51:5000"
 
-replicaCount: 1
+replicaCount: 3
 
 image:
-  repository: golang
+  repository: kafka
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.19.debug"
+  tag: "3.6.0"
 
 imagePullSecrets: []
 nameOverride: ""

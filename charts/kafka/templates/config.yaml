@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka.fullname" . }}-config
+data:
+  kafka_server_jaas.conf: |+
+    KafkaServer {
+      org.apache.kafka.common.security.plain.PlainLoginModule required
+      username="USERNAME"
+      password="PASSWORD"
+      user_USERNAME="PASSWORD";
+    };
+  sasl.properties: |+
+    security.protocol=SASL_PLAINTEXT
+    sasl.mechanism=PLAIN
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+    username=\"USERNAME\" password=\"PASSWORD\";
+  run.sh: |+
+    set -x
+    #sed -e "s/USERNAME/$KAFKA_USERNAME/g;s/PASSWORD/$KAFKA_PASSWORD/g" /kafka_config/kafka_server_jaas.conf >/opt/kafka/config/kafka_server_jaas.conf
+    #sed -e "s/USERNAME/$KAFKA_USERNAME/g;s/PASSWORD/$KAFKA_PASSWORD/g" /kafka_config/kafka_client_jaas.conf >/opt/kafka/config/kafka_client_jaas.conf
+    export KAFKA_NODE_ID=${POD_NAME##*-}
+    export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_NAME}.kafka-default.component.svc.cluster.local:9092
+    export KAFKA_LISTENERS=${POD_NAME}.kafka-default.component.svc.cluster.local
+
+    envsubst < /opt/kafka/config/kraft/server.properties.template > /opt/kafka/config/kraft/server.properties
+
+    /opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /opt/kafka/config/kraft/server.properties
+    /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
+

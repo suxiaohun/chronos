@@ -1,85 +1,133 @@
-# Default values for kafka.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 global:
-  hostArch: "amd64"
-  imageRegistry: "10.4.243.51:5000"
+  # -- if true, deploy with foundry unique configuration
+  isViper: true
+  # -- docker registry address
+  dockerRegistry: "10.4.243.51:5000"
+  # -- prometheus deploy namespace
+  monitorNamespace: "monitoring"
+  model:
+    version:
+      # -- viper face feature model version
+      face: "25200"
+      # -- viper pedestrian model version
+      pedestrian: "15300"
+      # -- viper automobile model version
+      automobile: "11000"
+      # -- viper carplate model version
+      carplate: "10500"
+      # -- viper human powered vehicle model version
+      humanPoweredVehicle: "10100"
+    configmap:
+      # -- model configmap name
+      name: "models-config"
+      # -- model configmap namespace
+      namespace: "default"
 
-replicaCount: 3
 
-image:
-  repository: kafka
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.5.1"
+# -- kafka replica count
+replicaCount: 1
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+# -- kafka name suffix
+nameSuffix: "default"
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
+# -- k8s nodeSelector
 nodeSelector: {}
+  # viper.sensetime.com/node-components: "True"
 
+# -- k8s tolerations
 tolerations: []
 
+# -- k8s node/pod affinity/anti-affinity
 affinity: {}
+
+image:
+  # -- image pull policy
+  pullPolicy: "Always"
+  # -- image pull secrets
+  pullSecrets: ["inner"]
+  repository:
+    # -- kafka image repo
+    kafka: "kafka"
+    # -- busybox arm64 image repo
+    busybox: "busybox"
+  tag:
+    # -- kafka multi arch image tag
+    kafka: "3.6.0.debug5"
+    # -- busybox multi arch image tag
+    busybox: "1.33.0-amd64"
+
+# -- pod security context
+podSecurityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+
+service:
+  kafka:
+    # -- service type.
+    type: "Headless"
+    port:
+      # -- kafka server port
+      server: 9092
+      # -- kafka server ssl port
+      serverSSL: 9093
+      # -- kafka metrics port
+      metric: 7071
+    # -- enable prometheus servicemonitor or not
+    enableServiceMonitor: false
+
+resources:
+  limits:
+    cpu: "1"
+    memory: "2Gi"
+  requests:
+    cpu: "0.5"
+    memory: "200Mi"
+
+persistence:
+  # -- mount how many pv for each replica
+  pvcPerPod: 1
+  # -- storageclass name
+  storageClass: "local-kafka"
+  # -- volume type, supported type is localvolume or emptydir
+  volumeType: "localvolume" 
+  # -- volume size, for example "100G"
+  volumeSize: "1G"
+
+property: 
+  auth:
+    # -- enable kafka auth or not
+    enabled: true
+  ssl: 
+    # -- enable kafka ssl or not
+    enabled: false
+    # -- server certs secret name
+    secretName: "infra-server-certs"
+    # -- truststore password reference key
+    truststorePasswdRef: "truststore_password"
+    # -- keystore password reference key
+    keystorePasswdRef: "keystore_password"
+    # -- key password reference key
+    keyPasswdRef: "key_password"
+  # -- kafka network mode, hostNetwork or ClusterIP
+  networkMode: "ClusterIP"
+  # -- topic retention bytes, default is 10G
+  retentionBytes: "10737418240"
+  # -- topic retention hours, default is 1 week
+  retentionHours: 168
+  # -- java heap
+  javaXmx: "16G"
+  # -- auto create topics
+  autoCreateTopics: false 
+
+init:
+  # -- init topics
+  topics:
+    - "oplog.tsfd.features.face_25300"
+    - "oplog.tsfd.features.pedestrian_15500"
+
+  # -- set init topic retention hours and bytes
+  topicRetentions: []
+  #  - topic_name: "mytopic"
+  #    retention_hours: 8760          # 1 year
+  #    retention_bytes: "10737418240"   # 10G
+  topicPartitions: 32

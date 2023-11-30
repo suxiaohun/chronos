@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: golang-dev
+spec:
+  containers:
+    - name: golang
+      image: 10.4.243.51:5000/golang:1.19.debug
+      imagePullPolicy: Always
+      command: ["tail", "-f", "/dev/null"]

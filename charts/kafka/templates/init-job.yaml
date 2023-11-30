@@ -1,0 +1,77 @@
+{{- $fullname := include "kafka.fullname" . }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullname }}-initializer
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 10
+  template:
+    metadata:
+      name: {{ $fullname }}-initializer
+      labels:
+        {{- include "common.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{ include "kafka.imagePullSecrets" . | nindent 6 }}
+      initContainers:
+      - name: wait
+        image: {{ include "common.image" (list . "busybox") | quote }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command:
+        - sh
+        - -c
+        - |
+          trap exit TERM
+          pods={{ include "kafka.pods" . | quote }}
+          port={{ .Values.service.kafka.port.server }}
+          for host in ${pods}; do
+            while true; do
+              nc -vz -w 3 $host $port
+              if [ $? -eq 0 ]; then
+                break
+              else
+                echo "info: failed to connect to $host:$port, sleep 1 second then retry"
+                sleep 1
+              fi
+            done
+          done
+          echo "info: successfully connected to all kafka pods, able to initialize Kafka now"
+      containers:
+      - name: init
+        image: {{ include "common.image" (list . "kafka") | quote }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command: ["/bin/sh","-ec","/init_component.sh"]
+        env:
+        {{- if .Values.property.auth.enabled }}
+        - name: KAFKA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.global.isViper }}password-secrets{{ else }}{{ $fullname }}-secret{{ end }}
+              key: kafka_admin_username
+        - name: KAFKA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.global.isViper }}password-secrets{{ else }}{{ $fullname }}-secret{{ end }}
+              key: kafka_admin_password
+        {{- end }}
+        volumeMounts:
+        - name: kafka-config
+          subPath: "sasl.properties"
+          mountPath: /kafka_config/sasl.properties
+        - name: kafka-init
+          subPath: "init_component.sh"
+          mountPath: /init_component.sh
+          readOnly: true
+      volumes:
+      - name: kafka-config
+        configMap:
+          name: {{ $fullname }}-config
+          defaultMode: 0755
+      - name: kafka-init
+        configMap:
+          name: {{ $fullname }}-init
+          defaultMode: 0755

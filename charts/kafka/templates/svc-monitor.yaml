@@ -1,0 +1,23 @@
+{{- if .Values.service.kafka.enableServiceMonitor }}
+{{- $fullname := include "kafka.fullname" . }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullname }}-servicemonitor
+  namespace: {{ .Values.global.monitorNamespace }}
+  labels:
+    k8s-app: {{ $fullname }}
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchLabels:
+      {{- include "kafka.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  endpoints:
+  - port: http-metrics
+    interval: 30s
+    honorLabels: true
+{{- end }}

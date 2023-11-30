@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka.fullname" . }}-init
+data:
+  init_component.sh: |
+    #!/bin/bash
+
+    set -x
+
+    topics=( {{include "kafka.topics" .}} )
+    topic_retentions='{{ include "kafka.topicRetentions" . }}'
+
+
+
+    create_topic_if_not_exist() {
+        topic=$1
+        kafka-topics.sh --create \
+            --topic $topic \
+            --replication-factor {{if eq (int .Values.replicaCount) 1}}1{{else}}2{{end}} \
+            --partitions {{ .Values.init.topicPartitions | int }} \
+            --config retention.ms={{mul (int .Values.property.retentionHours) 3600 1000}} \
+            --config retention.bytes={{.Values.property.retentionBytes}} \
+            --if-not-exists
+    }
+
+    create_topics() {
+        for topic in ${topics[@]};do
+          echo "Create topic " $topic
+          create_topic_if_not_exist $topic
+        done
+    }
+
+    override_topic_retentions() {
+        topic_retentions_len=$( echo "$topic_retentions" | jq -r ". | length" )
+
+        for i in $(seq 1 $topic_retentions_len); do
+            index=$(( i - 1 ))
+            topic_name=`echo "$topic_retentions" | jq -r ".[$index].topic_name"`
+            retention_hours=`echo "$topic_retentions" | jq -r ".[$index].retention_hours"`
+            retention_bytes=`echo "$topic_retentions" | jq -r ".[$index].retention_bytes"`
+
+            create_topic_if_not_exist $topic_name
+
+            kafka-topics.sh --alter \
+                --topic $topic \
+                --config retention.ms=$(( $retention_hours * 3600 * 1000 )) \
+                --config retention.bytes=$retention_bytes
+        done
+    }
+
+    zk_status_ready
+    create_topics
+    override_topic_retentions

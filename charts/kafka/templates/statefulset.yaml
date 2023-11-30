@@ -1,54 +1,22 @@
+{{ $fullname := include "kafka.fullname" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "kafka.fullname" . }}
+  name: {{ $fullname }}
   labels:
-    {{- include "kafka.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
+    {{- include "kafka.selectorLabels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "kafka.fullname" . }}
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  serviceName: {{ $fullname }}
   selector:
     matchLabels:
       {{- include "kafka.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         {{- include "kafka.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "kafka.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.global.imageRegistry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 9092
-            - containerPort: 9093
-          env:
-            - name: KAFKA_CLUSTER_ID
-              value: 'WmCAg2QASfOft6rmzGg-HA'
-            - name: DEFAULT_REPLICATION_FACTOR
-              value: '3'
-            - name: DEFAULT_MIN_INSYNC_REPLICAS
-              value: '2'
-          volumeMounts:
-            - mountPath: /mnt/kafka
-              name: data
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -61,13 +29,153 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{ include "kafka.imagePullSecrets" . | nindent 6 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "common.image" (list . "kafka") | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+          command:
+            - sh
+            - -exc
+            - |
+              exec /run.sh
+          env:
+            - name: KAFKA_CLUSTER_ID
+              value: "Y6uRG8lwQWy2whj2W04YJw"
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "0@kafka-default-0.kafka-default.component:9093"
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xmx{{ .Values.property.javaXmx }} -Xms{{ .Values.property.javaXmx }}"
+            - name: KAFKA_JVM_PERFORMANCE_OPTS
+              value: " -server -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:InitiatingHeapOccupancyPercent=45 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true "
+            - name: KAFKA_OPTS
+              value: " -Dlogging.level=INFO {{ if .Values.property.auth.enabled }}-Djava.security.auth.login.config=/opt/kafka/config/kafka_server_jaas.conf{{ end }}"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+        {{- if .Values.property.auth.enabled }}
+            - name: KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.global.isViper }}password-secrets{{ else }}{{ $fullname }}-secret{{ end }}
+                  key: kafka_admin_username
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.global.isViper }}password-secrets{{ else }}{{ $fullname }}-secret{{ end }}
+                  key: kafka_admin_password
+        {{- end }}
+        {{- if .Values.property.ssl.enabled }}
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.property.ssl.secretName }}
+                  key: {{ .Values.property.ssl.truststorePasswdRef }}
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.property.ssl.secretName }}
+                  key: {{ .Values.property.ssl.keystorePasswdRef }}
+            - name: KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.property.ssl.secretName }}
+                  key: {{ .Values.property.ssl.keyPasswdRef }}
+        {{- end }}
+    {{- if eq "emptydir" .Values.persistence.volumeType }}
+          volumeMounts:
+        {{- range $i, $e := until (int .Values.persistence.pvcPerPod) }}
+            - name: data{{ $i }}
+              mountPath: /var/lib/kafka{{ $i }}
+        {{- end }}
+            - name: kafka-config
+              mountPath: /kafka_config
+            - name: kafka-init
+              subPath: "init_component.sh"
+              mountPath: /init_component.sh
+              readOnly: true
+      volumes:
+        - name: kafka-config
+          configMap:
+            name: kafka-config-{{ .Values.nameSuffix }}
+            defaultMode: 0755
+        - name: kafka-init
+          configMap:
+            name: kafka-init-{{ .Values.nameSuffix }}
+            defaultMode: 0755
+        {{- range $i, $e := until (int .Values.persistence.pvcPerPod) }}
+        - name: data{{ $i }}
+          emptydir: {}
+        {{- end }}
+    {{- else if eq "localvolume" .Values.persistence.volumeType }}
+          volumeMounts:
+        {{- range $i, $e := until (int .Values.persistence.pvcPerPod) }}
+            - name: localvolume{{ $i }}
+              mountPath: /var/lib/kafka{{ $i }}
+        {{- end }}
+            - name: kafka-config
+              subPath: "kafka_server_jaas.conf"
+              mountPath: /kafka_config/kafka_server_jaas.conf
+            - name: kafka-config
+              subPath: "sasl.properties"
+              mountPath: /kafka_config/sasl.properties
+            - name: kafka-config
+              subPath: "run.sh"
+              mountPath: /run.sh
+            - name: kafka-init
+              subPath: "init_component.sh"
+              mountPath: /init_component.sh
+              readOnly: true
+        {{- if .Values.property.ssl.enabled }}
+            - name: keystore
+              mountPath: "/ca"
+              readOnly: true
+        {{- end }}
+      volumes:
+        - name: kafka-config
+          configMap:
+            name: {{ $fullname }}-config
+            defaultMode: 0755
+        - name: kafka-init
+          configMap:
+            name: {{ $fullname }}-init
+            defaultMode: 0755
+    {{- end }}
+    {{- if .Values.property.ssl.enabled }}
+        - name: keystore
+          secret:
+            secretName: infra-server-certs
+            items:
+            - key: keystore.jks
+              path: keystore/server.keystore.jks
+            - key: truststore.jks
+              path: truststore/server.truststore.jks
+    {{- end }}
+{{- if eq "localvolume" .Values.persistence.volumeType }}
   volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        storageClassName: local-kafka
-        resources:
-          requests:
-            storage: "1Gi"
+  {{- range $i, $e := until (int .Values.persistence.pvcPerPod) }}
+  - metadata:
+      name: localvolume{{ $i }}
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      {{- include "kafka.storageClass" $ | nindent 6 }}
+      resources:
+        requests:
+          {{- include "kafka.volumeSize" $ | nindent 10 }}
+  {{- end }}
+{{- end }}
+
