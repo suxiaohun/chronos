@@ -21,6 +21,7 @@ data:
             --partitions {{ .Values.init.topicPartitions | int }} \
             --config retention.ms={{mul (int .Values.property.retentionHours) 3600 1000}} \
             --config retention.bytes={{.Values.property.retentionBytes}} \
+            --bootstrap-server kafka-default.component:9092 \
             --if-not-exists
     }
 

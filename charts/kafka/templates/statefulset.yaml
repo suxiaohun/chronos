@@ -48,7 +48,17 @@ spec:
             - name: KAFKA_CLUSTER_ID
               value: "Y6uRG8lwQWy2whj2W04YJw"
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-              value: "0@kafka-default-0.kafka-default.component:9093"
+            {{- range $i, $e := until (int .Values.replicaCount) }}
+            {{- end }}
+            {{- $values := "" }}
+            {{- $end := int .Values.replicaCount }}
+            {{- range $i, $val := until $end }}
+              {{- $values = printf "%s%d@kafka-default-%d.kafka-default.component:9093" $values $val $val }}
+              {{- if lt $i (sub $end 1) }}
+                {{- $values = printf "%s," $values }}
+              {{- end }}
+            {{- end }}
+              value: "{{ $values }}"
             - name: KAFKA_HEAP_OPTS
               value: "-Xmx{{ .Values.property.javaXmx }} -Xms{{ .Values.property.javaXmx }}"
             - name: KAFKA_JVM_PERFORMANCE_OPTS
