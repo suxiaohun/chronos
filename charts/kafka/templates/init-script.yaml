@@ -17,11 +17,10 @@ data:
         topic=$1
         kafka-topics.sh --create \
             --topic $topic \
-            --replication-factor {{if eq (int .Values.replicaCount) 1}}1{{else}}2{{end}} \
             --partitions {{ .Values.init.topicPartitions | int }} \
             --config retention.ms={{mul (int .Values.property.retentionHours) 3600 1000}} \
             --config retention.bytes={{.Values.property.retentionBytes}} \
-            --bootstrap-server kafka-default.component:9092 \
+            --bootstrap-server kafka-default-0.kafka-default.component:9092 \
             --if-not-exists
     }
 
@@ -50,6 +49,5 @@ data:
         done
     }
 
-    zk_status_ready
     create_topics
     override_topic_retentions

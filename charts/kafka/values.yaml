@@ -52,7 +52,7 @@ image:
     busybox: "busybox"
   tag:
     # -- kafka multi arch image tag
-    kafka: "3.6.0.debug5"
+    kafka: "3.6.1.debug4"
     # -- busybox multi arch image tag
     busybox: "1.33.0-amd64"
 
