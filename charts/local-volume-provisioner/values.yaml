@@ -71,6 +71,9 @@ classes:
 - name: local-kafka
   hostDir: "/sususu/locals/kafka"
   storageClass: true
+- name: local-dokuwiki
+  hostDir: "/sususu/locals/dokuwiki"
+  storageClass: true
 
 
 

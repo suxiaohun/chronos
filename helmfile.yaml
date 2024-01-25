@@ -27,9 +27,12 @@ releases:
 #  - name: seaweedfs
 #    namespace: component
 #    chart: ./charts/seaweedfs
-#  - name: spark-manager
-#    namespace: batch
-#    chart: ./charts/spark-job-manager
+  - name: spark-manager
+    namespace: batch
+    chart: ./charts/spark-job-manager
+  - name: dokuwiki
+    namespace: default
+    chart: ./charts/dokuwiki
 #  - name: cmak
 #    namespace: cmak
 #    chart: ./charts/cmak-operator
