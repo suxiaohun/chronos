@@ -30,9 +30,6 @@ releases:
   - name: spark-manager
     namespace: batch
     chart: ./charts/spark-job-manager
-  - name: dokuwiki
-    namespace: default
-    chart: ./charts/dokuwiki
 #  - name: cmak
 #    namespace: cmak
 #    chart: ./charts/cmak-operator
