@@ -95,12 +95,12 @@ hostAliases:
 ## @param dokuwikiUsername User of the application
 ## ref: https://github.com/bitnami/containers/tree/main/bitnami/dokuwiki#environment-variables
 ##
-dokuwikiUsername: user
+dokuwikiUsername: admin
 ## @param dokuwikiPassword Application password
 ## Defaults to a random 10-character alphanumeric string if not set
 ## ref: https://github.com/bitnami/containers/tree/main/bitnami/dokuwiki#environment-variables
 ##
-dokuwikiPassword: ""
+dokuwikiPassword: "123456"
 ## @param existingSecret Use an existing secret with the dokuwiki password
 ##
 existingSecret: ""
@@ -402,7 +402,7 @@ service:
   ## @param service.ports.https Service HTTPS port
   ##
   ports:
-    http: 8082
+    http: 80
     https: 443
   ##
   ## @param service.nodePorts [object] Use nodePorts to request some specific ports when using NodePort
@@ -411,7 +411,7 @@ service:
   ##   https: <to set explicitly, choose port between 30000-32767>
   ##
   nodePorts:
-    http: ""
+    http: "30080"
     https: ""
   ## @param service.clusterIP Kubernetes service Cluster IP
   ## e.g.:
