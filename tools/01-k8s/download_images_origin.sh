@@ -18,7 +18,7 @@ registry.k8s.io/etcd:3.5.10-0
 
 
 for imageName in "${images[@]}" ; do
-    docker pull $imageName
+#    docker pull $imageName
 
     tag=$(echo "$imageName" | cut -d "/" -f2)
 
