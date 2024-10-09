@@ -1,0 +1,10 @@
+
+grafana:
+  dashboardsConfigMaps:
+    additional:
+    {{- range $_, $filepath := ( exec "bash" (list "-c" "echo -n ./dashboards/*.json") | splitList " " ) }}
+    {{ $file := regexReplaceAll ".*/" $filepath "" }}
+    - fileName: {{ $file }}
+      configMapName: grafana-dashboard-{{ trimSuffix ".json" $file }}
+      fileContent: {{ readFile $filepath | toPrettyJson }}
+    {{- end }}

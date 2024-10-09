@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Clean node k8s deps
+      script: "/data/nova/gbfoundry/scripts/deploy/reset_k8s.sh"
+      delegate_to: "{{ inventory_hostname }}"

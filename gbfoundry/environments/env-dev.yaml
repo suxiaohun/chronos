@@ -1,0 +1,33 @@
+# global values
+global:
+  product_name: "gbfoundry"
+  productV_version: "0.1.1"
+  is_nova: true
+  is_standalone: false
+  docker_registry: "10.100.11.110:8080"
+  image_pull_secrets: ["registrysecret"]
+  helm_repo_addr: http://sz.viper.sensesecurity.net/chartrepo/sensefoundry-stable
+  helm_repo_name: gb
+  ssh_port: "22"
+  open_firewall: true
+
+# --------------------------------------------------------- component ---------------------------------------------------------
+
+nodes:
+  controller:
+    - host: standalone-amd64-t4-26-211
+      ip: 172.20.26.211
+      ssh_user: root
+      ssh_pass: V1p3r1@#$%
+      parted_rule: foundry-standalone-test
+      gpu: t4
+      gpu_count: 8
+  data_clustering:
+    - host: standalone-amd64-t4-26-211
+      ip: 172.20.26.211
+      ssh_user: root
+      ssh_pass: V1p3r1@#$%
+      parted_rule: foundry-standalone-test
+      gpu: t4
+      gpu_count: 8
+

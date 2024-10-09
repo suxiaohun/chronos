@@ -1,0 +1,15 @@
+environments:
+  default:
+    values:
+      - ./release.yaml
+      - ./base.yaml
+  prod:
+    values:
+      - ./release.yaml
+      - ./base.yaml
+      - ./environments/env-{{ .Environment.Name }}.yaml
+
+helmfiles:
+  - path: helmfiles/apps.yaml
+    values:
+    - {{ toYaml .Values | nindent 8 }}

@@ -1,0 +1,1931 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:529",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 85,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 26,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "running pod nums",
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "lcd",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [],
+          "values": false
+        },
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "6.7.2",
+      "targets": [
+        {
+          "expr": "sum(kube_pod_container_status_running{container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"})",
+          "interval": "",
+          "legendFormat": "coordinator-olap",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(kube_pod_container_status_running{container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"})",
+          "interval": "",
+          "legendFormat": "reducer-olap",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(kube_pod_container_status_running{container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"})",
+          "interval": "",
+          "legendFormat": "worker-olap",
+          "refId": "C"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Running pod",
+      "type": "bargauge"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "system request, such as success nums, cancel nums",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 17,
+        "x": 7,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_code=\"OK\"})",
+          "interval": "",
+          "legendFormat": "{Type: OK}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_code=\"DeadlineExceeded\"})",
+          "interval": "",
+          "legendFormat": "{Type: Timeout}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_code=\"Canceled\"})",
+          "interval": "",
+          "legendFormat": "{Type: Cancel}",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_code!~\"OK|Canceled|DeadlineExceeded\"}) ",
+          "interval": "",
+          "legendFormat": "{Type: Other}",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3618",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3619",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "cluster-indexes of each worker",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 10,
+        "x": 0,
+        "y": 10
+      },
+      "hiddenSeries": false,
+      "id": 28,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(search_worker_index_count{job=\"engine-tsfd-face-olap-worker\",type=\"cluster\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "C"
+        },
+        {
+          "expr": "search_worker_index_count{job=\"engine-tsfd-face-olap-worker\",type=\"cluster\"}",
+          "interval": "",
+          "legendFormat": "{Pod:{{ pod }}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "cluster indexes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3691",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3692",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "clusters of each worker",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 14,
+        "x": 10,
+        "y": 10
+      },
+      "hiddenSeries": false,
+      "id": 30,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(search_worker_index_size{job=\"engine-tsfd-face-olap-worker\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "A"
+        },
+        {
+          "expr": "search_worker_index_size{job=\"engine-tsfd-face-olap-worker\"}",
+          "interval": "",
+          "legendFormat": "{Pod: {{ pod }}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "clusters",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3764",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3765",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "details of cluster-search , such success nums, cancel nums...",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 11,
+        "x": 0,
+        "y": 20
+      },
+      "hiddenSeries": false,
+      "id": 32,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\",grpc_code=\"OK\"})",
+          "interval": "",
+          "legendFormat": "{Type: OK}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\",grpc_code=\"Canceled\"})",
+          "interval": "",
+          "legendFormat": "{Type: Canceled}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\",grpc_code=\"DeadlineExceeded\"})",
+          "interval": "",
+          "legendFormat": "{Type: Timeout}",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\",grpc_code=\"DeadlineExceeded\"})",
+          "interval": "",
+          "legendFormat": "{Type: InvalidArgument}",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\",grpc_code!~\"OK|Canceled|DeadlineExceeded|InvalidArgument\"})",
+          "interval": "",
+          "legendFormat": "{Type: Other}",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Cluster Search Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1594",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1595",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "the rate of cluster-search request",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 13,
+        "x": 11,
+        "y": 20
+      },
+      "hiddenSeries": false,
+      "id": 34,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\"}[1m]))",
+          "interval": "",
+          "legendFormat": "{Type: Avg}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(grpc_server_handled_total{job=\"engine-tsfd-face-olap-reducer\",grpc_method=\"ClusterSearch\"}[1m])",
+          "interval": "",
+          "legendFormat": "{Type: One, Pod: {{pod}}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "cluster search rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1627",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1628",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 15,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "memory details of reducer",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 2
+          },
+          "hiddenSeries": false,
+          "id": 12,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"} / 1000000000 ",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Reducer Memory",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4003",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4004",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "cpu details of reducer",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 2
+          },
+          "hiddenSeries": false,
+          "id": 16,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"} [1m])",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-reducer\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Reducer Cpu",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4076",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4077",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "memory details of coordinator",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "hiddenSeries": false,
+          "id": 18,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"} / 1000000000 ",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Coor Memory",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4149",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4150",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "cpu details of coordinator",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "hiddenSeries": false,
+          "id": 20,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"} [1m])",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-coor\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Coor CPU",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4222",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4223",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "memory details of worker",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 18
+          },
+          "hiddenSeries": false,
+          "id": 22,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"} / 1000000000",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Worker Memory",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4295",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4296",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "cpu details of worker",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 18
+          },
+          "hiddenSeries": false,
+          "id": 24,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"} [1m])",
+              "interval": "",
+              "legendFormat": "{Type: Used, Pod: {{pod}}}",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_pod_container_resource_limits{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Limit, Pod: {{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", container=\"engine-tsfd-face-worker\",pod=~\".*-olap-.*\"}",
+              "interval": "",
+              "legendFormat": "{Type: Request, Pod: {{pod}}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Worker CPU",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4368",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4369",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "Resource",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 4,
+      "panels": [],
+      "title": "Oplog",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "success num of oplog consuming",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(oplog_add_feature_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: add_features}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(oplog_add_index_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: add_index}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(oplog_del_feature_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: delete_feature}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(oplog_delete_clusterid_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: delete_feature_clusterId}",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(oplog_add_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: add_cluster}",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(oplog_del_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: delete_cluster}",
+          "refId": "F"
+        },
+        {
+          "expr": "sum(oplog_update_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster}",
+          "refId": "G"
+        },
+        {
+          "expr": "sum(oplog_update_cluster_user_key_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster_user_key}",
+          "refId": "H"
+        },
+        {
+          "expr": "sum(oplog_delete_cluster_user_key_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: delete_cluster_user_key}",
+          "refId": "I"
+        },
+        {
+          "expr": "sum(oplog_merge_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: merge_cluster}",
+          "refId": "J"
+        },
+        {
+          "expr": "sum(oplog_update_cluster_preview_image_consume_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster_preview_image}",
+          "refId": "K"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Oplog consume success count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1007",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1008",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "the failed num of oplog consuming",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "hiddenSeries": false,
+      "id": 40,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(oplog_consume_failed_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "B"
+        },
+        {
+          "expr": "oplog_consume_failed_count{job=\"engine-tsfd-face-olap-coor\"}",
+          "interval": "",
+          "legendFormat": "{Reason: {{reason}}, Pod: {{pod}}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Oplog consume failed count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4462",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4463",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "the rate of oplog consuming",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(oplog_add_feature_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: add_feature}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(oplog_add_index_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: add_index}",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(oplog_update_clusterid_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type; update_feature_clusterId}",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(oplog_del_feature_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: delete_feature}",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(oplog_delete_clusterid_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: delete_feature_clusterId}",
+          "refId": "E"
+        },
+        {
+          "expr": "rate(oplog_add_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: add_cluster}",
+          "refId": "F"
+        },
+        {
+          "expr": "rate(oplog_del_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: delete_cluster}",
+          "refId": "G"
+        },
+        {
+          "expr": "rate(oplog_update_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster}",
+          "refId": "H"
+        },
+        {
+          "expr": "rate(oplog_update_cluster_user_key_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster_user_key}",
+          "refId": "I"
+        },
+        {
+          "expr": "rate(oplog_delete_cluster_user_key_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: delete_cluster_user_key}",
+          "refId": "J"
+        },
+        {
+          "expr": "rate(oplog_merge_cluster_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: merge_cluster}",
+          "refId": "K"
+        },
+        {
+          "expr": "rate(oplog_update_cluster_preview_image_consume_count{job=\"engine-tsfd-face-olap-coor\"} [5m])",
+          "interval": "",
+          "legendFormat": "{Type: update_cluster_preview_image}",
+          "refId": "L"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Oplog consume rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1080",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1081",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "cassandra latnecy of oplog",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 52
+      },
+      "hiddenSeries": false,
+      "id": 38,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "oplog_cassandra_operation_duration{job=\"engine-tsfd-face-olap-coor\"}",
+          "interval": "",
+          "legendFormat": "{Type: {{type}}, Pod: {{ pod }},  Quantile:{{ quantile }}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "cassandra latency of oplog operation",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4535",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4536",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "description": "it only means one operation failed, not oplog consume failed",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      },
+      "hiddenSeries": false,
+      "id": 37,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(oplog_operation_failed_count{job=\"engine-tsfd-face-olap-coor\"})",
+          "interval": "",
+          "legendFormat": "total",
+          "refId": "B"
+        },
+        {
+          "expr": "oplog_operation_failed_count{job=\"engine-tsfd-face-olap-coor\"}",
+          "interval": "",
+          "legendFormat": "{Type: {{type}}, Reason: {{reason}}, Pod:{{pod}}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "oplog operation failed information",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:851",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:852",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 22,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Engine / timespace-face-Feature-DB-olap",
+  "uid": "engine-timespace-face-feature-db-olap",
+  "variables": {
+    "list": []
+  },
+  "version": 3
+}

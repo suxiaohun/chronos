@@ -1,0 +1,14 @@
+---
+
+- hosts: node
+  become: true
+  tasks:
+    - name: Check if node is already part of the Kubernetes cluster (on controller node)
+      shell: "kubectl get nodes | grep -w {{ inventory_hostname }}"
+      register: node_check
+      ignore_errors: true
+      delegate_to: "{{ groups['master'][0] }}"
+
+    - name: Join the node to the cluster if not already part of it
+      script: "/data/nova/gbfoundry/.k8s_join_command.sh"
+      when: node_check.rc != 0

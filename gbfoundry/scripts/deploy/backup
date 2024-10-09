@@ -1,0 +1,13 @@
+---
+kubeadm token create --print-join-command
+--cri-socket unix:///var/run/cri-dockerd.sock
+
+kubeadm join 10.100.11.119:6443 --token tqs8rh.ynk36kclywuvzg4z --discovery-token-ca-cert-hash sha256:5875b5b54db8ca4d58f8a777e0175c9032f0d7ae7574f08aa57f39c0a334dc74 --cri-socket unix:///var/run/cri-dockerd.sock
+
+kubeadm join 10.100.11.119:6443 --token j6j6j4.9xuv1c2eshmw9j25 --discovery-token-ca-cert-hash sha256:6a655e7cdb585f93853e655adbf7b6f4810ba22de9cd7fd450b8fc6096da3029 --cri-socket unix:///var/run/cri-dockerd.sock
+---
+
+kubectl delete -f /data/nova/gbfoundry/packages/calico/custom-resources.yaml
+kubectl delete -f /data/nova/gbfoundry/packages/calico/tigera-operator.yaml
+
+

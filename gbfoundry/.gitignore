@@ -1,0 +1,14 @@
+charts/
+/env-*.yaml
+env.yaml
+gen-*.yaml
+merge-*.yaml
+gen/config.yml
+ansible-infra
+gen/output
+custom-config/*
+custom-values/*
+.idea
+ansible-infra
+
+packages/tools/jdk-17_linux-x64_bin.rpm

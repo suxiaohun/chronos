@@ -1,0 +1,159 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Copy all files from local directory to remote nodes
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/
+        dest: /data/nova/gbfoundry/packages/nodes/
+        owner: root
+        group: root
+        mode: '0755'
+      delegate_to: "{{ inventory_hostname }}"
+    - name: "hostname | Set hostname now & permanently"
+      hostname:
+        name: "{{ inventory_hostname }}"
+
+    - name: Backup yum repo
+      command: mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+
+    - name: Set yum repo
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/yum/CentOS-Base.repo
+        dest: /etc/yum.repos.d/CentOS-Base.repo
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set docker repo
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/yum/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set Kubernetes repo
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/yum/kubernetes.repo
+        dest: /etc/yum.repos.d/kubernetes.repo
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Clean old repo
+      command: yum clean all
+
+    - name: Makecache repo
+      command: yum makecache
+
+    # 关闭防火墙
+    - name: Disable firewalld
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: no
+
+    # 禁用 SELinux
+    - name: Disable SELinux
+      command: setenforce 0
+      when: ansible_selinux.status == "enabled"
+
+    - name: Update SELinux config to permissive
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: 'SELINUX=permissive'
+
+    # 安装必要的依赖
+    - name: Install required packages
+      yum:
+        name:
+          - git
+          - make
+          - wget
+          - tmux
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+          - yum-plugin-versionlock
+        state: present
+
+    - name: Install Docker
+      command: yum install -y docker-ce-26.1.4-1.el7
+
+    - name: Config docker insecure registries
+      shell: echo '{"insecure-registries":["10.100.11.110:8080"]}' > /etc/docker/daemon.json
+
+    - name: Start and enable Docker service
+      command: systemctl restart docker
+
+    - name: Docker login
+      command: docker login --username=admin --password=Harbor12345 10.100.11.110:8080
+
+    - name: Check if cri-dockerd is installed
+      stat:
+        path: /usr/local/bin/cri-dockerd
+      register: cri_dockerd_stat
+
+    - name: Install cri-dockerd if not already installed
+      shell: install -o root -g root -m 0755 /data/nova/gbfoundry/packages/nodes/cri-dockerd/cri-dockerd /usr/local/bin/cri-dockerd
+      when: not cri_dockerd_stat.stat.exists
+
+    - name: Set cri-docker system service
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/cri-dockerd/cri-docker.service
+        dest: /etc/systemd/system/cri-docker.service
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ inventory_hostname }}"
+      when: not cri_dockerd_stat.stat.exists
+
+    - name: Set cri-docker system socket
+      copy:
+        src: /data/nova/gbfoundry/packages/nodes/cri-dockerd/cri-docker.socket
+        dest: /etc/systemd/system/cri-docker.socket
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ inventory_hostname }}"
+      when: not cri_dockerd_stat.stat.exists
+
+    - name: Reload system service
+      shell: systemctl daemon-reload
+      delegate_to: "{{ inventory_hostname }}"
+      when: not cri_dockerd_stat.stat.exists
+
+    - name: Enable and start cri-docker
+      systemd:
+        name: cri-docker
+        state: started
+        enabled: yes
+
+    # 安装 kubeadm, kubelet, kubectl
+    - name: Install Kubernetes packages
+      command: yum install -y kubelet-1.28.13-150500.1.1 kubeadm-1.28.13-150500.1.1 kubectl-1.28.13-150500.1.1
+
+    - name: Enable and start kubelet
+      systemd:
+        name: kubelet
+        state: started
+        enabled: yes
+
+    - name: Lock software version
+      command: yum versionlock docker-ce kubelet kubeadm kubectl
+
+    # 禁用 Swap
+    - name: Disable swap
+      command: swapoff -a
+
+    - name: Remove swap from fstab
+      mount:
+        name: swap
+        fstype: swap
+        state: absent

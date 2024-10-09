@@ -1,0 +1,54 @@
+---
+commonLabels:
+  nova: {{ .Values.global.productVersion }}
+
+repositories:
+  - name: gb
+    url: {{ .Values | get "global.harborRegistry" "10.100.11.110:8080" }}
+    oci: true
+    username: {{ .Values.global.harborUsername }}
+    password: {{ .Values.global.harborPassword }}
+    plainHttp: true
+    skipTLSVerify: true
+
+templates:
+  global: &global_values
+    set:
+    - name: global.harborRegistry
+      value: {{ $.Values | get "global.harborRegistry" "10.100.11.110:8080" | quote }}
+
+releases:
+{{- range $app_name, $app_map := .Values }}
+  {{- if and (ne $app_name "global") (ne $app_name "releases") (ne $app_name "nodes") }}
+     {{- range $instance_name, $instance_map := $app_map }}
+     {{ $app_name := $app_name | replace "_" "-" }}
+     {{ $instance_name := $instance_name | replace "_" "-" }}
+      - name: {{ $app_name }}-{{ $instance_name }}
+        installed: {{ $instance_map.enabled }}
+        labels:
+          app: {{ $.Values.releases | get $app_name |get "group" }}
+        version: {{ $.Values.releases | get $app_name | get "version" }}
+        namespace: {{ $instance_map.namespace }}
+        chart: {{ $.Values.releases | get $app_name | get "repo" "gb" }}/charts/{{ $app_name }}
+        wait: {{ $instance_map | get "wait" false }}
+        waitForJobs: {{ $instance_map | get "waitForJobs" false }}
+        timeout: {{ $instance_map | get "timeout" 600 }}
+        needs:
+{{ $instance_map | get "needs" | toYaml | nindent 10 }}
+        values:
+        - ../values/{{ $app_name }}/values-{{ $instance_name }}.yaml
+        - {{ $instance_map | toYaml | nindent 10 }}
+        - ../values/{{ $app_name }}/values.yaml.gotmpl
+        <<: *global_values
+        hooks:
+        - events: ["postsync"]
+          showlogs: true
+          command: "echo"
+          args:
+          - --release
+          - "{{`{{.Release.Name}}`}}"
+          - --nsname
+          - "{{`{{.Release.Namespace}}`}}"
+     {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,69 @@
+# global values
+global:
+  productName: "gbfoundry"
+  productVersion: "0.1.1"
+  harborRegistry: "10.100.11.110:8080"
+  harborUsername: admin
+  harborPassword: Harbor12345
+  sshPort: 22
+  openFirewall: false
+
+# --------------------------------------------------------- k8s ---------------------------------------------------------
+set-namespace:
+  default:
+    enabled: true
+    namespace: kube-system
+    needs: []
+    nodeSelector: []
+    replicaCount: 1
+
+
+local-volume-provisioner:
+  default:
+    enabled: true
+    namespace: kube-system
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 1
+
+prometheus:
+  default:
+    enabled: true
+    namespace: monitoring
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 1
+
+loki:
+  default:
+    enabled: true
+    namespace: logging
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 1
+
+# --------------------------------------------------------- devops ---------------------------------------------------------
+jenkins:
+  default:
+    enabled: true
+    namespace: devops
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 1
+
+
+# --------------------------------------------------------- biz ---------------------------------------------------------
+mes:
+  default:
+    enabled: true
+    namespace: mes
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 1
+
+
