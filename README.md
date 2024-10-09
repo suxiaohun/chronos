@@ -41,3 +41,7 @@ Software versions:
 
 After the above steps, you already have a complete k8s cluster and supporting services, you can adjust them as needed, congratulations!
 
+---
+# Tips
+1. Use `docker` as the CRI, not `containerd`
+2. Only support `Centos7`
