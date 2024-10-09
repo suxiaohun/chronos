@@ -1,6 +1,6 @@
 global:
   hostArch: "amd64"
-  imageRegistry: "10.4.243.51:5000"
+  imageRegistry: "10.100.11.110:8080/infra"
 
 
 common:
@@ -127,10 +127,10 @@ daemonset:
   # Defines Provisioner's image name including container registry.
   #
   image:
-    repository: infra/local-volume-provisioner
+    repository: local-volume-provisioner
     tag:
-      amd64: v2.4.0-amd64
-      arm64: v2.4.0-arm64
+      amd64: v2.7.0
+      arm64: v2.7.0
   #
   # Defines Image download policy, see kubernetes documentation for available values.
   #

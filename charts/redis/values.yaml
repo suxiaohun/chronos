@@ -9,7 +9,7 @@ global:
   monitorNamespace: "monitoring"
 
 # -- cassandra name suffix
-nameSuffix: "default"
+nameSuffix: ""
 
 # -- replicas
 replicaCount: 1
@@ -42,7 +42,7 @@ image:
   tag:
     amd64:
       # -- redis amd64 image tag
-      redis: "7.2.0-amd64"
+      redis: "7.2.5"
       # -- exporter amd64 image tag
       exporter: "v1.15.1-amd64"
     arm64:
@@ -93,8 +93,8 @@ resources:
       cpu: "1"
       memory: "9Gi"
     requests:
-      cpu: "1"
-      memory: "2Gi"
+      cpu: "100m"
+      memory: "128Mi"
   # -- exporter resources
   exporter:
     limits:

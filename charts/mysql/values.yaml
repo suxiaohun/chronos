@@ -6,7 +6,7 @@ global:
   imageRegistry: "10.4.243.51:5000"
 
 image: "mysql"
-imageTag: "5.7.43"
+imageTag: "5.7.44"
 
 strategy:
   type: Recreate
@@ -25,7 +25,7 @@ testFramework:
 ## Specify password for root user
 ##
 ## Default: random 10 character string
-mysqlRootPassword: "123456"
+mysqlRootPassword: "5107333e08a8"
 
 ## Create a database user
 ##

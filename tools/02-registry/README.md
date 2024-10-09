@@ -1,13 +1,13 @@
 # build private registry with docker
 
 ## 1.get image
-- `docker pull registry:2.8.2`
+- `docker pull registry:2.8.3`
 ## 2.run base container
-- `docker run -d -p 5000:5000 --restart=always --name registry registry:2.8.2`
+- `docker run -d -p 5000:5000 --restart=always --name registry registry:2.8.3`
 ## 3.run with local storage
-- `docker run -d -p 5000:5000 --restart=always --name registry -v /sususu/registry:/var/lib/registry registry:2.8.2`
+- `docker run -d -p 5000:5000 --restart=always --name registry -v /data/registry:/var/lib/registry registry:2.8.3`
 ## 4.config docker to use --insecure-registry option
-- `vim /etc/docker/daemon.json`
+- `sudo vim /etc/docker/daemon.json`
 - add config: `{ "insecure-registries" : ["myregistrydomain.com:5000"]}`
 - restart docker: `sudo systemctl restart docker.service`
 
@@ -35,6 +35,15 @@ Above all, you can pull and push images by the private registry
 ---
 
 
+
+
+
+# base services
+## mysql
+```shell
+docker run --name mysql5.7 -d -v /locals/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.7.44
+```
+## redis
 
 
 

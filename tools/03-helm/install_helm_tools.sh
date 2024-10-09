@@ -19,13 +19,14 @@ function install_helm_plugin() {
   tool=$1
   version=$2
   rm -rf $PLUGIN_DIR/$tool
+  mkdir -p $PLUGIN_DIR/$tool
 
   tar -zxvf ${FILE_DIR}/$tool-$version-$HOST_ARCH.tgz -C $PLUGIN_DIR
   echo_green "***** $tool plugin installed ******"
 }
 
 function main() {
-  install_binary helm v3.12.2
+  install_binary helm v3.14.2
   install_binary helmfile 0.155.1
   install_helm_plugin helm-diff v3.8.1
 }
