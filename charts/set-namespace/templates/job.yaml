@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "set-namespace.fullname" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"  # 确保在其他资源创建之后运行
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ include "set-namespace.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              # 循环创建命名空间
+              {{- range .Values.namespaces }}
+              kubectl create namespace {{ . }} || echo "Namespace {{ . }} already exists"
+              kubectl create secret generic registrysecret \
+                --from-file=.dockerconfigjson=/config.json \
+                --type=kubernetes.io/dockerconfigjson \
+                -n {{ . }} || echo "Secret in {{ . }} already exists"
+
+              kubectl patch serviceaccount default \
+                -p '{"imagePullSecrets": [{"name": "registrysecret"}]}' \
+                -n {{ . }} || echo "Failed to patch ServiceAccount in {{ . }}"
+              {{- end }}
+          volumeMounts:
+            - mountPath: /config.json
+              name: dockerconfigjson
+      restartPolicy: Never
+      serviceAccountName: {{ include "set-namespace.serviceAccountName" . }}
+      volumes:
+        - name: dockerconfigjson
+          hostPath:
+            path: /root/.docker/config.json
+  backoffLimit: 0
+  
