@@ -48,6 +48,6 @@ sh scripts/parts/mount_dir.sh loki
 sh scripts/parts/mount_dir.sh prometheus
 sh scripts/parts/mount_dir.sh jenkins
 sh scripts/parts/mount_dir.sh grafana
-
+sh scripts/parts/mount_dir.sh emqx
 
 

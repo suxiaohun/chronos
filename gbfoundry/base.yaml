@@ -45,6 +45,15 @@ loki:
     nodeSelector: []
     replicaCount: 1
 
+# --------------------------------------------------------- component ---------------------------------------------------------
+emqx:
+  default:
+    enabled: true
+    namespace: component
+    needs:
+      - kube-system/set-namespace-default
+    nodeSelector: []
+    replicaCount: 3
 # --------------------------------------------------------- devops ---------------------------------------------------------
 jenkins:
   default:

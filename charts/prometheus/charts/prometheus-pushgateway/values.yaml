@@ -69,7 +69,9 @@ extraVars: []
 ## extraArgs:
 ##  - --persistence.file=/data/pushgateway.data
 ##  - --persistence.interval=5m
-extraArgs: []
+extraArgs:
+  - --persistence.file=/data/pushgateway.data
+  - --log.level=debug
 
 ## Additional InitContainers to initialize the pod
 ##
