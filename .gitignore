@@ -5,3 +5,5 @@ services/migrate_service/migrations/*
 charts/clickhouse.old
 
 tools/01-k8s/temp_images
+
+charts/**/*.tgz

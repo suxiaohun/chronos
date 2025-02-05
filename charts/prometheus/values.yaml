@@ -268,7 +268,7 @@ server:
   global:
     ## How frequently to scrape targets by default
     ##
-    scrape_interval: 1m
+    scrape_interval: 15s
     ## How long until a scrape request times out
     ##
     scrape_timeout: 10s
@@ -277,8 +277,8 @@ server:
     evaluation_interval: 1m
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write
   ##
-  remoteWrite:
-    - url: "http://prometheus-server.monitoring:80/api/v1/write"
+#  remoteWrite:
+#    - url: "http://prometheus-default-server.monitoring:80/api/v1/write"
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read
   ##
   remoteRead: []
@@ -796,6 +796,7 @@ serverFiles:
 
     scrape_configs:
       - job_name: prometheus
+        honor_timestamps: false
         static_configs:
           - targets:
             - localhost:9090

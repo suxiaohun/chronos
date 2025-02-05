@@ -18,6 +18,7 @@ spec:
               # 循环创建命名空间
               {{- range .Values.namespaces }}
               kubectl create namespace {{ . }} || echo "Namespace {{ . }} already exists"
+              kubectl delete secret registrysecret
               kubectl create secret generic registrysecret \
                 --from-file=.dockerconfigjson=/config.json \
                 --type=kubernetes.io/dockerconfigjson \
