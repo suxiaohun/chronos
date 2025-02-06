@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: iot-web
+  name: iot-web
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30098
+  selector:
+    app: iot-web
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-web
+spec:
+  selector:
+    matchLabels:
+      app: iot-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: iot-web
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: iot-web
+          image: "{{ .Values.image.repository }}/{{ .Values.image.web.name }}:{{ .Values.image.web.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

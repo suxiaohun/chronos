@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iot-cfg
+data:
+  env: |
+    DB_URL=@tcp(192.168.181.97:3306)/iot?charset=utf8&timeout=3s
+    DB_USER=mes
+    DB_PASSWORD=mes123456!
+
+    MQTT_BROKER=tcp://10.100.11.119:31883
+    MQTT_CLIENT_PREFIX=go_mqtt_sub_client_
+    MQTT_USERNAME=mes
+    MQTT_PASSWD=mes123456
+
+    JWT_ENABLED=true

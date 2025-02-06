@@ -555,6 +555,11 @@ data:
 
             #access_log  logs/host.access.log  main;
 
+            location /api/iotDevice/ {
+                rewrite ^/api/iotDevice/(.*)$ /api/$1 break;
+                proxy_pass http://iot-rest.iot-system:8080;
+            }
+
             location /api/party/ {
                 proxy_pass http://mes-check.mes-system:8080;
             }
