@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mes-web
+  name: mes-web
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30099
+  selector:
+    app: mes-web
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mes-web
+spec:
+  selector:
+    matchLabels:
+      app: mes-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mes-web
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: mes-web
+          image: "{{ .Values.image.repository }}/{{ .Values.image.web.name }}:{{ .Values.image.web.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: nginx
+              subPath: nginx.conf
+      volumes:
+        - name: nginx
+          configMap:
+            name: mes-cfg
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+

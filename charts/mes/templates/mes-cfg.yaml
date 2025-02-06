@@ -1,0 +1,596 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mes-cfg
+data:
+  mes-env: |
+    DB_URL=@tcp(192.168.180.132:3306)/mes?charset=utf8&timeout=3s
+    DB_USER=mes
+    DB_PASSWORD=mes123456!
+
+    LOG_DB_URL=@tcp(192.168.181.50:3306)/logs_test?charset=utf8&timeout=3s
+    LOG_DB_USER=root
+    LOG_DB_PASSWORD=qazXSW123!
+
+    NATS_URL=nats://192.168.180.135:31422
+
+    U9_URL=http://10.100.11.211
+    U9_CLIENT_ID=U9API
+    U9_CLIENT_SECRET=4f69d691b5c449769edafb824be35aa1
+    U9_ENT_CODE=666
+
+    U9_YL_DB_SERVER=10.100.11.134
+    U9_YL_DB_PORT=1433
+    U9_YL_DB_USER=SG
+    U9_YL_DB_PWD=GB123.QAZ
+    U9_YL_DB_DB=GBU9DB2018
+
+    CHECK_URL=http://192.168.99.57:30053
+    CHECK_LIMS_URL=http://192.168.181.116
+    CHECK_WMS_URL=http://192.168.180.102:9099
+    CHECK_WMS_URL2=http://192.168.181.25:8005
+    CHECK_SRM_URL=http://192.168.180.86:8888
+
+    JWT_ENABLED=true
+    SIGN_ENABLED=true
+
+    EXTERNAL_SECRET_WMS=7ffc306ae386127b
+    EXTERNAL_SECRET_CONTROL=4c25c91812204fb8
+
+    IOT_REST_HOST=http://iot-rest.iot-system:8080
+  method_target.json: |
+    {
+      "method_target_map": {
+        "getBsMaterialListByBc": "物料定义通过code",
+        "updBsProdBomList": "产品配方列表",
+        "exportQaProdRptList": "成品检验报告",
+        "getMaterialsRptDateNo": "原辅料检验报告",
+        "getPackagingRptDateNo": "包材检验报告",
+        "getQaCheckConclusionGroupList": "qa检查结论组",
+        "getQaCheckTemplate": "qa抽检模板",
+        "getQaCheckUnqualifiedTypeListAll": "qa不合格类型",
+        "getQaDetectOrderList": "qa待检测订单",
+        "getQaMaterialTypeListAll": "qa物料分类",
+        "getQaProdRptDateNo": "成品检验报告日期",
+        "getQaProdRptProdType": "成品检验报告类型",
+        "getMeterLastRecord": "水电气最新记录",
+        "getTeamList": "班组列表",
+        "meterReport": "水电气填报",
+        "getBsProdOrderListNoProduce": "生产订单",
+        "getQaOrg": "qa组织架构",
+        "getQaStaffListByFlag": "过程检测通过Flag",
+        "getQaOrganizationListAll": "过程检测",
+        "getQaProcDetectByQaOrgId": "过程检测通过OrgID",
+        "getQaProcessById": "过程检测通过ID",
+        "updQaProcessDetect": "过程检测",
+        "updQaProcessStatus": "过程检测",
+        "getBsProdProceFinList": "成品工序关系",
+        "getBsProdProceList": "成品工序",
+        "getSlStaffWagesList": "工资明细",
+        "addTmSchedule": "考勤确认",
+        "delTmScheduleAtt": "考勤确认",
+        "refreshToken": "token",
+        "delete": "图片",
+        "imageView": "图片",
+        "captcha": "验证码",
+        "getCaptcha": "验证码",
+        "getUsOrganizationList": "生产组织列表",
+        "upload": "图片",
+        "login": "系统",
+        "feiShuLogin": "系统(by飞书)",
+        "importBsBomList": "配方",
+        "getSysLogList": "系统日志",
+        "calPlMaterialByOrder": "物料计算",
+        "getQaStaffList": "质量人员",
+        "updQaStaff": "质量人员",
+        "delQaStaff": "质量人员",
+        "addQaStaff": "质量人员",
+        "getQaOrganizationListTree": "质量组织架构",
+        "updQaOrganization": "质量组织架构",
+        "delQaOrganization": "质量组织架构",
+        "getQaPositionList": "质量岗位",
+        "updQaPosition": "质量岗位",
+        "delQaPosition": "质量岗位",
+        "addQaPosition": "质量岗位",
+        "getQaStandardLevelList": "质量定义",
+        "updQaStandardLeve": "质量定义",
+        "delQaStandardLeve": "质量定义",
+        "addQaStandardLeve": "质量定义",
+        "getQaStandardKindList": "质量种类",
+        "updQaStandardKind": "质量种类",
+        "delQaStandardKind": "质量种类",
+        "addQaStandardKind": "质量种类",
+        "getQaProcDetectList": "过程管理检查项",
+        "updProcDetect": "过程管理检查项",
+        "delQaProcDetect": "过程管理检查项",
+        "addQaProcDetect": "过程管理检查项",
+        "importQaProcDetect": "过程管理检查项",
+        "exportQaProcDetect": "过程管理检查项",
+        "getQaProcessList": "过程检测列表",
+        "updQaProcess": "过程检测单",
+        "delQaProcess": "过程检测单",
+        "addQaProcess": "过程检测单",
+        "batchReviewProcess": "批量审核了过程检测单",
+        "getQaIllegalOperationList": "改善措施列表",
+        "updQaIllegalOperation": "改善措施",
+        "delQaIllegalOperation": "改善措施",
+        "reviewQaIllegalOperation": "审核了改善措施",
+        "getQaWarehousingOrderList": "原料入库列表",
+        "whAction": "进行了原料入库操作",
+        "closeQaWarehousingOrder": "关闭了原料入库单",
+        "getQaWarehousingOrderRecListByPid": "原料入库记录",
+        "getQaProdWarehousingOrderList": "产品入库列表",
+        "getQaProdWarehousingOrderRecListByPid": "产品入库记录",
+        "prodWhAction": "进行了产品入库操作",
+        "closeProdQaWarehousingOrder": "关闭了产品入库单",
+        "getQaCheckItemList": "抽检指标",
+        "updQaCheckItem": "抽检指标",
+        "delQaCheckItem": "抽检指标",
+        "addQaCheckItem": "抽检指标",
+        "importQaCheckItem": "抽检指标",
+        "getQaCheckUnqualifiedTypeList": "不合格类型",
+        "updQaCheckUnqualifiedType": "不合格类型",
+        "delQaCheckUnqualifiedType": "不合格类型",
+        "addQaCheckUnqualifiedType": "不合格类型",
+        "getQaCheckTemplateList": "抽检模板",
+        "updQaCheckTemplate": "抽检模板",
+        "delQaCheckTemplate": "抽检模板",
+        "addQaCheckTemplate": "抽检模板",
+        "getQaMaterialsRptList": "原料抽检列表",
+        "getQaMaterialsRptById": "原料抽检单",
+        "delQaMaterialsRpt": "原料抽检单",
+        "addQaMaterialsRpt": "原料抽检单",
+        "updQaMaterialsRpt": "原料抽检单",
+        "updMaterialsRptReviewStatus": "原料抽检单状态",
+        "getQaMaterialsRptByIdForMobile": "原料抽检单-手机端",
+        "addQaMaterialsRptMobile": "原料抽检单-手机端",
+        "exportQaMaterialsRptList": "原辅料抽检单",
+        "getQaPackagingRptList": "包材抽检列表",
+        "getQaPackagingRptById": "包材抽检单",
+        "delQaPackagingRpt": "包材抽检单",
+        "addQaPackagingRpt": "包材抽检单",
+        "addPackagingRptMobile": "包材抽检单-手机端",
+        "getPackagingRptByIdForMobile": "包材抽检单-手机端",
+        "updPackagingRptForMobile": "包材抽检单-手机端",
+        "updPackagingRptReviewStatus": "包材抽检单状态",
+        "exportQaPackagingRptList": "包材抽检单",
+        "getQaProdRptList": "成品抽检单列表",
+        "getQaProdRptById": "成品抽检单",
+        "delQaProdRpt": "成品抽检单",
+        "addQaProdRpt": "成品抽检单",
+        "updQaProdRpt": "成品抽检单",
+        "updQaProdRptReviewStatus": "成品抽检单状态",
+        "addQaProdRptMobile": "成品抽检单-手机端",
+        "getQaProdRptByIdForMobile": "成品抽检单-手机端",
+        "updQaProdRptForMobile": "成品抽检单-手机端",
+        "exportQaProdExcel": "成品抽检单",
+        "getLimsItemList": "lims检查项列表",
+        "getQaDetectOrderPlanList": "待检计划",
+        "getAllBsBomTree": "所有配方列表",
+        "getBsMaterialList": "物料列表",
+        "getBsMaterialListByCode": "物料列表通过物料编码",
+        "addBsMaterialSm": "物料半成品",
+        "delBsMaterialSm": "物料半成品",
+        "updBsMaterialSm": "物料半成品",
+        "getBsMaterialSmList": "物料半成品列表",
+        "getBsMaterialNameList": "物料半成品名字",
+        "getBsProdList": "产品列表",
+        "getBsProdListByCode": "产品列表通过产品编码",
+        "getBsProdByBarCode": "产品列表通过条形码",
+        "addBsProd": "产品",
+        "delBsProd": "产品",
+        "updBsProd": "产品",
+        "getBsProdStandardValueListByProdCode": "产品检验标准值列表",
+        "addBsProdStandardValueBatch": "产品检验标准值",
+        "delBsProdStandardValueByCode": "产品检验标准值通过成品Code",
+        "importProdStandardValue": "产品检验标准值",
+        "deleteProdStandardValueByCodes": "产品检验标准值通过codes",
+        "getBsProdExtList": "产品标准列表",
+        "addBsBomList": "配方列表",
+        "delBsBom": "配方",
+        "delBsBomById": "配方通过Id",
+        "updBsBomList": "配方",
+        "updBsBomById": "配方",
+        "getBsBomParentList": "父级配方列表",
+        "exportAllBsBomTree": "配方",
+        "updBsBomBatchCoefficient": "配方通过批次系数",
+        "getMincedMeatCode": "获取物料编码",
+        "addBsSoupBomList": "浓汤宝配方",
+        "delBsSoupBom": "浓汤宝配方",
+        "delBsSoupBomById": "浓汤宝配通过id",
+        "updBsSoupBomList": "浓汤宝配方",
+        "updBsSoupBomById": "浓汤宝配方通过Id",
+        "getAllBsSoupBomTree": "所有浓汤宝列表",
+        "getBsSoupBomById": "浓汤宝",
+        "getBsSoupBomParentList": "浓汤宝父级配方列表",
+        "exportAllBsSoupBomTree": "浓汤宝配方",
+        "getProdBomList": "产品配方列表",
+        "addBsProdBomList": "产品配方列表",
+        "getByProdCode": "通过产品编码获取",
+        "updBsProdBomById": "产品配方通过Id",
+        "delBsProdBomById": "产品配方",
+        "delBsProdBom": "产品配方",
+        "getBsProdBomInfoList": "产品配方信息",
+        "importProdBomList": "产品配方列表",
+        "exportProdBomList": "产品配方列表",
+        "getBsProceDefUserList": "工序定义登录用户列表",
+        "delBsProceDefUser": "工序定义登录用户",
+        "updBsProceDefUser": "工序定义登录用户",
+        "getProcDefNotUser": "",
+        "getProcDefUser": "",
+        "getBsFieldDefList": "字段定义列表",
+        "delBsProcDefField": "工序定义字段",
+        "updBsProcDefField": "工序定义字段",
+        "getBsProcDefField": "工序定义字段",
+        "addProcDef": "工序",
+        "addProcDefUser": "工序用户",
+        "updProcDef": "工序",
+        "delProcDef": "工序",
+        "defProcDefUser": "工序用户",
+        "getProcDefList": "工序列表",
+        "getProcDefById": "工序通过工序ID",
+        "getProcDefListByCode": "工序通过工序code",
+        "getProcDefListByCode2": "工序通过工序code",
+        "getProcDefListByOrgId": "工序通过组织ID",
+        "getProcDefParentList": "父工序",
+        "getProdDefByProdCodeFin": "成品工序",
+        "getProdDefByProdCode": "半成品工序",
+        "importProcList": "工序",
+        "addTeamDef": "班组",
+        "updTeamDef": "班组",
+        "delTeamDef": "班组",
+        "getTeamDefList": "班组列表",
+        "getTeamDefListByOrgId": "班组列表通过组织ID",
+        "getTeamListByUser": "班组列表通过用户",
+        "getBsSupplierList": "供货商列表",
+        "searchSupplierByName": "通过供货商名称查找",
+        "addStaff": "员工",
+        "updStaff": "员工",
+        "delStaff": "员工",
+        "getStaffList": "员工列表",
+        "getAllStaffList": "所有员工列表",
+        "getStaffById": "员工通过Id",
+        "importBsStaffList": "员工",
+        "exportBsStaffList": "员工",
+        "getStaffByName": "员工通过名字",
+        "getStaffByOrgId": "员工通过组织Id",
+        "addSemiprodSeries": "半成品系列",
+        "updSemiprodSeries": "半成品系列",
+        "delSemiprodSeries": "半成品系列",
+        "getSemiprodSeriesList": "半成品系列列表",
+        "getSemiprodSeriesByOrgId": "半成品系列列表通过组织id",
+        "getSemiProdSeriesByOrgIds": "半成品系列列表通过组织id",
+        "getSplitPricingList": "成品列表",
+        "addSplitPricing": "成品列表",
+        "updSplitPricing": "成品列表",
+        "importSplitPricing": "成品列表",
+        "getSplitPricingById": "成品列表通过id",
+        "delSplitPricing": "成品列表",
+        "getProdLineListByOrgId": "生产线列表通过Id",
+        "getProdLineList": "生产线列表",
+        "addProdLine": "生产线",
+        "updProdLine": "生产线",
+        "delProdLine": "生产线",
+        "getProdLineById": "生产线通过ID",
+        "importBsProdLine": "生产线",
+        "getCycleList": "周期列表",
+        "getProdLineSemiprodListPage": "半成品生产线列表",
+        "getProdLineSemiprodListByPid": "半成品生产线列表通过Id",
+        "getProdLineSemiprodById": "半成品生产线列表通过Id",
+        "addProdLineSemiprod": "半成品生产线",
+        "updProdLineSemiprod": "半成品生产线",
+        "delProdLineSemiprod": "半成品生产线",
+        "getBsProdSeriesListPage": "产品系列列表",
+        "addProdSeries": "产品系列",
+        "updProdSeries": "产品系列",
+        "delProdSeries": "产品系列",
+        "importProdSeries": "产品系列",
+        "getPlOrderMaterialDemandList": "物料采购需求列表",
+        "getSimBsProdOrderList": "生产订单",
+        "getInitMaterialDemandList": "物料需求清单",
+        "saveMaterialDemandList": "保存物料需求清单",
+        "delMaterialDemandList": "物料需求清单",
+        "excuteRefreshU9": "更新U9订单",
+        "delPlProductionPlan": "产品计划",
+        "getPlProductionPlanList": "生产计划",
+        "getPlanByVersionList": "",
+        "getInitPlanByChangeVersion": "",
+        "savePlProductionPlan": "保存生产计划",
+        "getPlProductionPlanById": "生产计划通过Id",
+        "getPlanBySameDay": "",
+        "getPlPlanRecList": "",
+        "addDistriBatchTask": "生产任务和配料任务",
+        "getPlProductionPlanListSub": "",
+        "exportMaterial": "物料",
+        "exportMaterialToU9": "物料TOU9",
+        "exportPlProductionPlan": "计划",
+        "exportMaterialByDeduct": "物料扣除",
+        "exportMaterialByDeductToU9": "物料扣除TOU9",
+        "getNo6zlPlanItemRates": "",
+        "updNo6zlPlanItemRate": "",
+        "getNo6zlPlanRates": "",
+        "updNo6zlPlanRate": "",
+        "getInitPlanList": "",
+        "addPlanRec": "生产计划订单",
+        "updPlanRec": "生产计划订单",
+        "delPlanRec": "生产计划订单",
+        "getPlanRecById": "生产计划订单通过Id",
+        "getPlanRecByPlanId": "生产计划订单通过计划Id",
+        "getPlPackPlanById": "包装计划通过Id",
+        "getPackPlanList": "包装计划列表",
+        "getPackPlanListForCheck": "包装计划列表",
+        "getProdPlanItemList": "产品计划明细列表",
+        "addPackPlan": "包装计划",
+        "addDistriPackTask": "下发包装任务",
+        "delPackPlan": "包装计划",
+        "getPackPlanInfo": "包装计划信息",
+        "getBsProdOrderListNoProducePack": "添加外购订单",
+        "getPackPlanRecByPid": "包装任务流程通过pid",
+        "addPlPackPlanRec": "包装计划",
+        "getPlMaterialCollList": "物料领用列表",
+        "getPlMaterialDemanList": "物料需求列表",
+        "getPlMaterialMainList": "主料需求列表",
+        "getPlMaterialCollById": "物料领用详情通过id",
+        "addPlMaterialColl": "物料领用",
+        "delPlMaterialColl": "物料领用",
+        "delPlMaterialCollByDate": "物料领用通过日期",
+        "updPlMaterialColl": "物料领用",
+        "calPlMaterialPack": "计算包材物料",
+        "exportMaterialPack": "物料",
+        "getPlCalculateOrderList": "物料计算订单列表",
+        "importCalculateOrder": "物料计算订单",
+        "getPlNtbTempOrderList": "浓汤宝物料计算临时订单列表",
+        "importPlNtbTempOrder": "浓汤宝物料计算临时订单",
+        "calcPlNtbTempOrder": "浓汤宝物料计算临时订单计算",
+        "getPlPackCollectList": "包材物料领用列表",
+        "getPlPackCollectDemanList": "包材物料领用详情",
+        "addPlPackCollect": "包材物料领用",
+        "getPlPackCollById": "包材物料领用通过Id",
+        "delPlPackCollect": "包材物料领用",
+        "delPlPackCollectByDate": "包材物料领用通过日期",
+        "updPlPackCollect": "包材物料领用",
+        "getTkBatchingTaskList": "配料任务列表",
+        "getTkBatchingTaskItemById": "配料任务项",
+        "updTkBatchingTask": "配料任务",
+        "updTkBatchingTaskStatus": "配料任务状态",
+        "delTkBatchingTask": "配料任务",
+        "addTkBatchingHandling": "配料任务",
+        "exportTkBatchingTask": "配料任务",
+        "updTkBatchingTaskItem": "配料任务项",
+        "updTkBatchingTaskPerBat": "一批item状态",
+        "delTkBatchingTaskItemHandle": "配料任务项",
+        "updBatchTaskCoefficient": "批量任务系数",
+        "getTkBatchingTaskItemByPidAndNo": "配料任务",
+        "updTkTraceBack": "任务追溯",
+        "updTkTraceBackStatus": "任务追溯状态",
+        "delTkTraceBack": "任务追溯",
+        "getTkTraceBack": "任务追溯",
+        "getTkTraceBackByBatchId": "任务追溯",
+        "getTkTraceBackBatchWeight": "任务追溯",
+        "updTkTraceBackItem": "任务项追溯",
+        "delTkTraceBackItem": "任务项追溯",
+        "addTkTraceBackItem": "任务项追溯",
+        "updTkTraceBackItemSubAllBatch": "任务项分项",
+        "updTkTraceBackItemSub": "任务项分项",
+        "saveTkPlanTask": "保存任务",
+        "delTkPlanTask": "任务",
+        "updTkPlanTask": "生产任务",
+        "updTkPlanTaskBackStatus": "生产任务状态",
+        "getTkPlanTaskList": "生产任务列表",
+        "getTkPlanTaskById": "生产任务",
+        "getTkTaskWarehousing": "任务仓库",
+        "createMaterialOrderCode": "创建物料订单编码",
+        "createOemOrderCode": "创建oem订单编码",
+        "updTkPlanTaskItem": "生产任务项",
+        "updTkPlanTaskItemById": "生产任务项",
+        "delTkPlanTaskItem": "生产任务项",
+        "saveTkPlanTaskItem": "保存生产任务项",
+        "updTkPlanTaskItemDef": "生产任务项默认",
+        "updTkPlanTaskItemCcbh": "生产任务项Ccbh",
+        "updTkPlanTaskItemPc": "生产任务项Pc",
+        "getTkPlanTaskItemParam": "计划任务项参数说明",
+        "delTkPackTask": "包装任务",
+        "updTkPackTask": "包装任务",
+        "updTkPackTaskBackStatus": "生产包装任务返回状态",
+        "getTkPackTaskList": "包装任务列表",
+        "getTkPackTaskById": "包装任务",
+        "updTkPackTaskItem": "包装任务项",
+        "updTkPackTaskItemBzh": "包装任务项Bzh",
+        "saveTkPackTaskItem": "保存包装任务项",
+        "updTkPackTaskItemDef": "包装任务项默认",
+        "updTkPackTaskItemPc": "包装任务项PC",
+        "delTkPackTaskItem": "包装任务项",
+        "getTkPackPlanTaskItemParam": "包装计划任务项参数说明",
+        "addTkOffPieceWage": "计件外工资",
+        "updTkOffPieceWage": "多个计件外工资",
+        "updTkOffPieceWageById": "计件外工资",
+        "delTkOffPieceWage": "计件外工资",
+        "delTkOffPieceWageById": "计件外工资",
+        "delTkOffPieceWageByPlanId": "计划的多个工序计件外工资",
+        "getTkOffPieceWageList": "计件外工资列表",
+        "getOrdProductProc": "已排产产品工序",
+        "getProdProducedList": "已排产产品 ",
+        "getTkOffPieceWageById": "计件外工资",
+        "getTkOffPieceWageByPlanId": "产品工序的计件外工资",
+        "getTkOffPieceWagePlan": "计件外工资已填写排产计划",
+        "exportTkOffPieceWageList": "计件外工资",
+        "getTkMaterialList": "原料录入列表",
+        "updTkMaterialList": "原料录入列表",
+        "saveTkMaterialDetail": "保存原料录入明细",
+        "getTkMaterialProcessList": "原料处理录入列表",
+        "getTkMaterialProcess": "原料处理录入明细",
+        "addTkMaterialProcess": "原料处理录入",
+        "updTkMaterialProcess": "原料处理录入",
+        "getTkMaterialDeductItemList": "材料扣除项目列表",
+        "delTkMaterialProcess": "原料处理录入",
+        "saveToU9Rec": "保存u9调用明细",
+        "getSpecialMaterial": "半成品配方中入半成品库料品",
+        "getTmScheduleOrgList": "跨组织借调列表",
+        "getTmScheduleList": "考勤列表",
+        "getTmScheduleAttList": "考勤确认列表",
+        "getInitScheduleAttList": "初始考勤列表",
+        "addTmScheduleOrg": "借调",
+        "delTmScheduleOrg": "借调",
+        "getTmScheduleOrgById": "车间考勤借调",
+        "addTmScheduleBatch": "批量考勤借调",
+        "delTmSchedule": "车间考勤借调",
+        "getTmScheduleById": "考勤借调",
+        "saveTmScheduleAttList": "考勤确认",
+        "updTmScheduleAtt": "考勤",
+        "getTmScheduleAttByContain": "考勤",
+        "getTmScheduleAttById": "考勤",
+        "getTmShiftList": "班次列表",
+        "getAllTmShift": "所有班次",
+        "addTmShift": "班次",
+        "delTmShift": "班次",
+        "updTmShift": "班次",
+        "getTmSchedulingList": "排班列表",
+        "getTmSchedulingById": "排班",
+        "addTmScheduling": "排班",
+        "delTmScheduling": "排班",
+        "updTmScheduling": "排班",
+        "addTmSchedulingWorker": "排班关联员工",
+        "delTmSchedulingWorker": "排班关联员工",
+        "getTmSchedulingDetailList": "排班明细列表",
+        "getTmSchedulingDetails": "排班明细",
+        "addTmSchedulingDetail": "排班明细",
+        "delTmSchedulingDetail": "排班明细",
+        "delTmSchedulingDetailByPId": "排班明细",
+        "updTmSchedulingDetail": "排班明细",
+        "getAllTmPersonalOverList": "加班列表",
+        "getTmPersonalOverById": "加班",
+        "addTmPersonalOver": "加班",
+        "batchAddTmPersonalOver": "加班",
+        "delTmPersonalOver": "加班",
+        "updTmPersonalOver": "加班",
+        "getTmAttendanceList": "个人考勤",
+        "getTmPersonalDayState": "个人考勤",
+        "getTmPersonalAttendance": "个人考勤",
+        "getTmScheduleData": "排班明细",
+        "addTmScheduleData": "排班明细",
+        "getParentProcList": "获取父工序",
+        "getSlStaffDayWagesList": "日工资列表",
+        "getSlLadderWagesList": "阶梯工资出账",
+        "getFinalState": "工资出账",
+        "getSlMonthWagesList": "月度工资列表",
+        "exportSlMonthWagesList": "月度工资列表",
+        "importSlMonthWagesList": "月度工资列表",
+        "getMeterRecordList": "水电气填报",
+        "getMaterRecordMonth": "水电气填报月度",
+        "updMeterRecord": "水电气填报",
+        "delMeterRecord": "水电气填报",
+        "getMeterList": "仪表列表",
+        "addMeter": "仪表",
+        "updMeter": "仪表",
+        "delMeter": "仪表",
+        "getMeterById": "仪表",
+        "importMeterList": "仪表",
+        "getIeProdEquipmentListPage": "Ie设备管理页面",
+        "importIeProdEquipment": "Ie设备导入",
+        "updateIeProdEquipmentById": "更新设备",
+        "deleteIeProdEquipmentById": "删除设备",
+        "addIeProdEquipment": "添加设备",
+        "getIeRecordProdListPage": "生区设别填写界面",
+        "updProd": "生区填报记录",
+        "getIeRecordProdList": "生区填报记录",
+        "updateIeRecordProdById": "更新生区填报记录",
+        "deleteIeRecordProdById": "删除生区填报记录",
+        "insertIeRecordProdList": "插入生区填报记录",
+        "exportIeRecordProd": "导出生区填报记录",
+        "getIeRecordPackList": "熟区填报记录",
+        "updateIeRecordPackById": "更熟区填报记录",
+        "deleteIeRecordPackById": "删熟区填报记录",
+        "insertIeRecordPackList": "插熟区填报记录",
+        "exportIeRecordPack": "导熟区填报记录"
+      }
+    }
+  nginx.conf: |
+    #user  nobody;
+    worker_processes  1;
+
+    #error_log  logs/error.log;
+    #error_log  logs/error.log  notice;
+    #error_log  logs/error.log  info;
+
+    #pid        logs/nginx.pid;
+
+
+    events {
+        worker_connections  1024;
+    }
+
+
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+
+        #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+        #                  '$status $body_bytes_sent "$http_referer" '
+        #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+        #access_log  logs/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        #keepalive_timeout  0;
+        keepalive_timeout  65;
+
+        gzip on;
+        #gzip_static on;
+        gzip_min_length 1100;
+        gzip_buffers 16 8k;
+        gzip_http_version 1.0;
+        gzip_comp_level 2;
+        gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+        gzip_vary off;
+        gzip_disable "MSIE [1-6].(?!.*SV1)";
+        client_max_body_size 50m;
+        #proxy_cache_path /usr/local/cache levels=1:2 keys_zone=mycache:10m max_size=10g inactive=60m use_temp_path=off;
+        server {
+            listen       8080;
+            server_name  127.0.0.1;
+
+            #charset koi8-r;
+
+            #access_log  logs/host.access.log  main;
+
+            location /api/party/ {
+                proxy_pass http://mes-check.mes-system:8080;
+            }
+
+            location /api/user/ {
+                proxy_pass http://mes-user.mes-system:8080;
+            }
+
+            location /api/ {
+                proxy_pass http://mes-rest.mes-system:8080;
+            }
+
+            location / {
+                #root   html;
+                #index  index.html index.htm;
+                 root /usr/share/nginx/html;
+                 index index.html;
+                 try_files $uri $uri/ /index.html =404;
+                 #proxy_cache mycache;
+                 #proxy_pass http://127.0.0.1:4200;
+            }
+
+            # location ~* \.(gif|jpeg|png|ico|swf)$ {
+            #      # d - 天
+            #      # h - 小时
+            #      # m - 分钟
+            #     expires 168h;
+            #     add_header Pragma public;
+            #     add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+            # }
+
+            # redirect server error pages to the static page /50x.html
+            #
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   html;
+            }
+        }
+    }

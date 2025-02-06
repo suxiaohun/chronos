@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mes-user
+  name: mes-user
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30119
+  selector:
+    app: mes-user
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mes-user
+spec:
+  selector:
+    matchLabels:
+      app: mes-user
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mes-user
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: mes-user
+          image: "{{ .Values.image.repository }}/{{ .Values.image.user.name }}:{{ .Values.image.user.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: tz-config
+              mountPath: /etc/localtime
+            - name: config-volume
+              mountPath: /.env
+              subPath: mes-env
+            - name: config-volume
+              mountPath: /config/method_target.json
+              subPath: method_target.json
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: config-volume
+          configMap:
+            name: mes-cfg
+
