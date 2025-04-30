@@ -717,8 +717,7 @@ server:
     loadBalancerSourceRanges: []
     servicePort: 80
     sessionAffinity: None
-    type: NodePort
-    nodePort: 32200
+    type: ClusterIP
 
     ## Enable gRPC port on service to allow auto discovery with thanos-querier
     gRPC:
@@ -1045,6 +1044,10 @@ serverFiles:
 
       - job_name: 'prometheus-pushgateway'
         honor_labels: true
+        basic_auth:
+          username: mes
+          password: Gb##2025
+
 
         kubernetes_sd_configs:
           - role: service

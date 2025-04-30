@@ -113,9 +113,9 @@ resources: {}
 
 # -- Sets web configuration
 # To enable basic authentication, provide basicAuthUsers as a map
-webConfiguration: {}
-  # basicAuthUsers:
-  #   username: password
+webConfiguration:
+   basicAuthUsers:
+     mes: "Gb##2025"
 
 liveness:
   enabled: true

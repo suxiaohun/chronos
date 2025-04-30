@@ -668,6 +668,8 @@ dashboardsConfigMaps: {}
 ## ref: http://docs.grafana.org/installation/configuration/
 ##
 grafana.ini:
+  metrics:
+    enabled: false
   paths:
     data: /var/lib/grafana/
     logs: /var/log/grafana
